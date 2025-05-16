@@ -62,6 +62,11 @@ const router = createRouter({
       name: 'equities',
       component: () => import('../views/toolView/Equities.vue'),
     },
+    {
+      path: '/proshares',
+      name: 'proshares',
+      component: () => import('../views/issuersView/proshares.vue'),
+    },
   ],
 })
 

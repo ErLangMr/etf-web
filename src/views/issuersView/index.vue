@@ -63,7 +63,7 @@ const etfList = ref([
 
 // 表头配置
 const tableColumns = ref([
-  { prop: 'Issuers', label: 'Issuers',type:'link',url:'/etf-detail' },
+  { prop: 'Issuers', label: 'Issuers',type:'link',url:'/proshares' },
   { prop: 'Revenue Rank', label: 'Revenue Rank' },
   { prop: '+/-', label: '+/-' },
   { prop: 'Estimated Issuer Revenue ($MM)', label: 'Estimated Issuer Revenue ($MM)' },
@@ -100,7 +100,7 @@ const activeTab = ref('Revenue')
         <ScreenerTable
           class="table-area"
           :table-columns="tableColumns"
-          :etf-list="etfList"
+          :table-data="etfList"
           :filter-tabs="filterTabs"
           :active-tab="activeTab"
           @update:activeTab="activeTab = $event"
