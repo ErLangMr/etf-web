@@ -7,6 +7,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+:root {
+  --theme-purple: #{$theme-purple};
+}
 
 html, body {
   height: 100%;
@@ -50,4 +53,4 @@ html, body {
   @include mobile {
     padding: 0 $spacing-small;
   }
-} 
+}

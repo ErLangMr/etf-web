@@ -70,6 +70,8 @@ const handleCountryClick = (name: string) => {
   </div>
 </template>
 <style scoped lang="scss">
+@use '@/styles/variables.scss' as *;
+
 .tool-view-container {
   width: 100%;
   padding: 20px;
@@ -98,7 +100,7 @@ const handleCountryClick = (name: string) => {
   padding: 0;
   margin: 0;
   font-size: 1.08rem;
-  color: #4B2994;
+  color: $theme-purple;
   line-height: 1.7;
 }
 .country-grid li {
@@ -112,13 +114,13 @@ const handleCountryClick = (name: string) => {
     text-decoration: underline;
   }
 }
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .country-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0 16px;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .country-grid {
     grid-template-columns: 1fr;
     gap: 0;

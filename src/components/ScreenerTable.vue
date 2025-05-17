@@ -79,6 +79,8 @@ const handleJump = (url: string) => {
   </div>
 </template>
 <style scoped lang="scss">
+@use '@/styles/variables.scss' as *;
+
 .screener-table-area {
   background: #fff;
   border-radius: 8px;
@@ -133,7 +135,7 @@ const handleJump = (url: string) => {
     border-right: none;
   }
   &.active {
-    background: #4B2994;
+    background: $theme-purple;
     color: #fff;
     font-weight: 600;
   }
@@ -152,12 +154,12 @@ const handleJump = (url: string) => {
   max-width: 100%;
   overflow-x: auto;
 }
-::v-deep(.el-table) {
+:deep(.el-table) {
   min-width: 900px;
   max-width: 100%;
 }
 .link-cell {
-  color: #409EFF;
+  color: $theme-purple;
   text-decoration: none;
   &:hover {
     text-decoration: underline;

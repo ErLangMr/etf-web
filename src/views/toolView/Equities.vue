@@ -8,21 +8,7 @@
         South Korea and Japan.
       </p>
     </div>
-    <div class="quick-facts">
-      <div class="facts-title">Quick Category Facts</div>
-      <div class="facts-row">
-        <div
-          class="fact-item"
-          v-for="(fact, idx) in facts"
-          :key="fact.label"
-          :class="{ last: idx === facts.length - 1 }"
-        >
-          <div class="fact-label">{{ fact.label }}</div>
-          <div class="fact-divider"></div>
-          <div class="fact-value">{{ fact.value }}</div>
-        </div>
-      </div>
-    </div>
+    <QuickFacts :facts="facts" title="Quick Category Facts"></QuickFacts>
     <div class="issuers-table-block">
       <div class="issuers-title">Top Issuers by AUM</div>
       <div class="issuers-table-wrap">
@@ -76,6 +62,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ScreenerTable from '@/components/ScreenerTable.vue';
+import QuickFacts from '@/components/QuickFacts.vue';
 const facts = ref([
   { label: "# of Funds", value: 50 },
   { label: "Total AUM ($,M)", value: "$54,303.11" },
@@ -195,76 +182,6 @@ const activeTab = ref('overview')
   .list-box{
   //  border: 1px solid #ccc;
    border-radius: 5px;
-  }
-  .quick-facts {
-    margin-top: 10px;
-  }
-  .facts-title {
-    font-size: 2rem;
-    font-weight: 400;
-    margin-bottom: 18px;
-  }
-  .facts-row {
-    display: flex;
-    gap: 32px;
-    justify-content: flex-start;
-  }
-  .fact-item {
-    flex: 1;
-    min-width: 120px;
-    border-right: 1px solid #e0e0e0;
-    padding: 0 16px;
-    text-align: center;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .fact-item:last-child {
-    border-right: none;
-  }
-  .fact-label {
-    color: #666;
-    font-size: 1rem;
-    margin-bottom: 8px;
-    font-weight: 400;
-  }
-  .fact-divider {
-    width: 100%;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 8px;
-  }
-  .fact-value {
-    margin-top: 4px;
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #222;
-  }
-
-  /* 移动端适配 */
-  @media (max-width: 768px) {
-    .facts-row {
-      flex-direction: column;
-      gap: 0;
-    }
-    .fact-item {
-      border-right: none;
-      border-bottom: 1px solid #e0e0e0;
-      margin-bottom: 16px;
-      padding: 12px 0;
-      min-width: 0;
-    }
-    .fact-item:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-    .facts-title {
-      font-size: 1.3rem;
-      text-align: center;
-    }
-    .fact-divider {
-      display: none;
-    }
   }
 }
 

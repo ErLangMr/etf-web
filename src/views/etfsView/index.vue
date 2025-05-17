@@ -117,7 +117,8 @@ const columnClick = (row: any, prop: string) => {
 </template>
 
 <style scoped lang="scss">
-$primary: #4B2994;
+@use '@/styles/variables.scss' as *;
+
 $gray-bg: #eee;
 $gray-text: #222;
 $desc-color: #444;
@@ -160,7 +161,7 @@ $desc-color: #444;
         border-radius: 0 4px 4px 0;
       }
       &.active {
-        background: $primary;
+        background: $theme-purple;
         color: #fff;
       }
     }
@@ -168,7 +169,7 @@ $desc-color: #444;
   .etf-table-section {
     margin-bottom: 2.5rem;
     .etf-table-title {
-      color: $primary;
+      color: $theme-purple;
       font-size: 1.5rem;
       font-weight: bold;
       margin-bottom: 1rem;
@@ -178,18 +179,18 @@ $desc-color: #444;
       margin-bottom: 0.5rem;
       // 让表格在小屏幕下可横向滚动
       overflow-x: auto;
-      ::v-deep .el-table__body-wrapper,
-      ::v-deep .el-table__header-wrapper {
+      :deep(.el-table__body-wrapper),
+      :deep(.el-table__header-wrapper) {
         overflow-x: auto !important;
       }
     }
     .etf-issuer {
-      color: #46338A;
+      color: $theme-purple;
       font-weight: 500;
       cursor: pointer;
     }
     .etf-table-more {
-      color: $primary;
+      color: $theme-purple;
       font-size: 0.95rem;
       cursor: pointer;
       user-select: none;
@@ -228,8 +229,8 @@ $desc-color: #444;
       }
       .etf-el-table {
         font-size: 0.95rem;
-        ::v-deep .el-table__body-wrapper,
-        ::v-deep .el-table__header-wrapper {
+        :deep(.el-table__body-wrapper),
+        :deep(.el-table__header-wrapper) {
           overflow-x: auto !important;
         }
       }

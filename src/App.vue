@@ -114,6 +114,7 @@ const toggleMenu = () => {
   display: flex;
   flex-direction: column;
   background-color: white;
+  overflow-y: auto;
 }
 
 .header {
@@ -220,7 +221,6 @@ const toggleMenu = () => {
   margin-top: $header-height;
   background: $background-color-white;
   height: calc(100% - $header-height);
-  overflow-y: auto;
   @include mobile {
     margin-top: $header-height-mobile;
   }

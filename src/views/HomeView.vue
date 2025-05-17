@@ -55,7 +55,9 @@ const handleClick = (path: string) => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use '@/styles/variables.scss' as *;
+
 .card-grid {
   width: 100%;
   display: flex;
@@ -99,7 +101,7 @@ const handleClick = (path: string) => {
 }
 .title {
   font-weight: 600;
-  color: #3b3b6d;
+  color: $theme-purple;
   font-size: 16px;
   margin-bottom: 8px;
   position: relative;
