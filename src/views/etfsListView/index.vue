@@ -45,8 +45,8 @@ const etfList = ref([
 
 // 表头配置
 const tableColumns = ref([
-  { prop: 'symbol', label: 'Symbol',type:'link',url:'/etf-detail' },
-  { prop: 'name', label: 'ETF Name',type:'link',url:'/etf-detail' },
+  { prop: 'symbol', label: 'Symbol',type:'link',url:'/details' },
+  { prop: 'name', label: 'ETF Name',type:'link',url:'/details' },
   { prop: 'asset', label: 'Asset Class' },
   { prop: 'total', label: 'Total Assets ($MM)' },
   { prop: 'ytd', label: 'YTD Price Change' },

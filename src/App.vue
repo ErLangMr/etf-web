@@ -33,9 +33,9 @@ const toggleMenu = () => {
             <img src="@/assets/VettaFi.svg" alt="Logo" />
           </div>
           <nav class="nav desktop-nav" v-if="!isMobile()">
-            <RouterLink to="/" class="nav-item">XX</RouterLink>
-            <RouterLink to="/about" class="nav-item">XXX</RouterLink>
-            <RouterLink to="/contact" class="nav-item">XXXX</RouterLink>
+            <RouterLink to="/screener" class="nav-item">XX</RouterLink>
+            <RouterLink to="/etfs" class="nav-item">XXX</RouterLink>
+            <RouterLink to="/tool" class="nav-item">XXXX</RouterLink>
           </nav>
         </div>
         <div class="right-section">
@@ -90,9 +90,9 @@ const toggleMenu = () => {
         </el-autocomplete>
       </div>
       <nav class="mobile-nav">
-        <RouterLink to="/" class="nav-item" @click="toggleMenu">XX</RouterLink>
-        <RouterLink to="/about" class="nav-item" @click="toggleMenu">XX</RouterLink>
-        <RouterLink to="/contact" class="nav-item" @click="toggleMenu">XXXX</RouterLink>
+        <RouterLink to="/screener" class="nav-item" @click="toggleMenu">XX</RouterLink>
+        <RouterLink to="/etfs" class="nav-item" @click="toggleMenu">XX</RouterLink>
+        <RouterLink to="/tool" class="nav-item" @click="toggleMenu">XXXX</RouterLink>
       </nav>
     </div>
 
@@ -110,7 +110,7 @@ const toggleMenu = () => {
 @use '@/styles/mixins' as *;
 
 .app {
-  height: 100vh;
+  height: calc(100vh - 20px);
   display: flex;
   flex-direction: column;
   background-color: white;
@@ -221,6 +221,8 @@ const toggleMenu = () => {
   margin-top: $header-height;
   background: $background-color-white;
   height: calc(100% - $header-height);
+
+  margin-bottom: 20px;
   @include mobile {
     margin-top: $header-height-mobile;
   }

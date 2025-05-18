@@ -6,13 +6,31 @@
         <div class="block">
           <div class="section-title">Vitals</div>
           <div class="info-list">
-            <div class="info-row"><span>Issuer</span><span>BNY Mellon</span></div>
-            <div class="info-row"><span>Brand</span><span>BNY Mellon</span></div>
+            <div class="info-row">
+              <span>Issuer</span
+              ><span class="linkStyle" @click.stop="router.push('/proshares')"
+                >BNY Mellon</span
+              >
+            </div>
+            <div class="info-row">
+              <span>Brand</span
+              ><span class="linkStyle" @click.stop="router.push('/proshares')"
+                >BNY Mellon</span
+              >
+            </div>
             <div class="info-row"><span>Structure</span><span>ETF</span></div>
-            <div class="info-row"><span>Expense Ratio</span><span>0.00%</span></div>
-            <div class="info-row"><span>ETF Home Page</span><span class="link">Home page</span></div>
-            <div class="info-row"><span>Inception</span><span>Apr 09, 2020</span></div>
-            <div class="info-row"><span>Index Tracked</span><span>Solactive GBS United ...</span></div>
+            <div class="info-row">
+              <span>Expense Ratio</span><span>0.00%</span>
+            </div>
+            <div class="info-row">
+              <span>ETF Home Page</span><span class="link">Home page</span>
+            </div>
+            <div class="info-row">
+              <span>Inception</span><span>Apr 09, 2020</span>
+            </div>
+            <div class="info-row">
+              <span>Index Tracked</span><span>Solactive GBS United ...</span>
+            </div>
           </div>
         </div>
         <div class="block">
@@ -21,7 +39,12 @@
             <button class="fa-report-btn">FA Report PDF</button>
           </div>
           <div class="analyst-content">
-            The BNY Mellon US Large Cap Core Equity ETF (BKLC) tracks an index of large cap U.S. equities... and does it for free. That's right: BKLC's management fee is zero. BKLC is part of a lineup of ETFs introduced by BNY Mellon in April 2020. As a latecomer to a crowded market, BNY Mellon is betting that its fee-free and ultra-low-cost funds will help win over investors.
+            The BNY Mellon US Large Cap Core Equity ETF (BKLC) tracks an index
+            of large cap U.S. equities... and does it for free. That's right:
+            BKLC's management fee is zero. BKLC is part of a lineup of ETFs
+            introduced by BNY Mellon in April 2020. As a latecomer to a crowded
+            market, BNY Mellon is betting that its fee-free and ultra-low-cost
+            funds will help win over investors.
             <span class="see-more">See more</span>
           </div>
         </div>
@@ -31,28 +54,52 @@
         <div class="block">
           <div class="section-title">ETF Database Themes</div>
           <div class="info-list">
-            <div class="info-row"><span>Category</span><span class="link">Large Cap Growth Eq...</span></div>
-            <div class="info-row"><span>Asset Class</span><span>Equity</span></div>
-            <div class="info-row"><span>Asset Class Size</span><span>Large-Cap</span></div>
-            <div class="info-row"><span>Asset Class Style</span><span>Blend</span></div>
-            <div class="info-row"><span>Region (General)</span><span class="link">North America</span></div>
-            <div class="info-row"><span>Region (Specific)</span><span>U.S.</span></div>
+            <div class="info-row">
+              <span>Category</span
+              ><span class="link" @click="router.push('/equities')">Large Cap Growth Eq...</span>
+            </div>
+            <div class="info-row">
+              <span>Asset Class</span><span class="link" @click="router.push('/etfs-list')">Equity</span>
+            </div>
+            <div class="info-row">
+              <span>Asset Class Size</span><span class="link" @click="router.push('/etfs-list')">Large-Cap</span>
+            </div>
+            <div class="info-row">
+              <span>Asset Class Style</span><span class="link" @click="router.push('/etfs-list')">Blend</span>
+            </div>
+            <div class="info-row">
+              <span>Region (General)</span
+              ><span class="link" @click="router.push('/etfs-list')">North America</span>
+            </div>
+            <div class="info-row">
+              <span>Region (Specific)</span><span class="link" @click="router.push('/etfs-list')">U.S.</span>
+            </div>
           </div>
         </div>
         <div class="block">
           <div class="section-title">FactSet Classifications</div>
           <div class="info-list">
-            <div class="info-row"><span>Segment</span><span>Equity: U.S. - Large Cap</span></div>
-            <div class="info-row"><span>Category</span><span>Size and Style</span></div>
+            <div class="info-row">
+              <span>Segment</span><span>Equity: U.S. - Large Cap</span>
+            </div>
+            <div class="info-row">
+              <span>Category</span><span>Size and Style</span>
+            </div>
             <div class="info-row"><span>Focus</span><span>Large Cap</span></div>
-            <div class="info-row"><span>Niche</span><span>Broad-based</span></div>
-            <div class="info-row"><span>Strategy</span><span>Vanilla</span></div>
-            <div class="info-row"><span>Weighting Scheme</span><span>Market Cap</span></div>
+            <div class="info-row">
+              <span>Niche</span><span>Broad-based</span>
+            </div>
+            <div class="info-row">
+              <span>Strategy</span><span>Vanilla</span>
+            </div>
+            <div class="info-row">
+              <span>Weighting Scheme</span><span>Market Cap</span>
+            </div>
           </div>
         </div>
       </div>
-       <!-- 第三行 -->
-       <div class="row">
+      <!-- 第三行 -->
+      <div class="row">
         <div class="block">
           <div class="section-title">Trading Data</div>
           <div class="info-list">
@@ -60,8 +107,12 @@
             <div class="info-row"><span>Volume</span><span>75,200</span></div>
             <div class="info-row"><span>Day Lo</span><span>$113.76</span></div>
             <div class="info-row"><span>Day Hi</span><span>$113.76</span></div>
-            <div class="info-row"><span>52 Week Lo</span><span>$91.90</span></div>
-            <div class="info-row"><span>52 Week Hi</span><span>$117.13</span></div>
+            <div class="info-row">
+              <span>52 Week Lo</span><span>$91.90</span>
+            </div>
+            <div class="info-row">
+              <span>52 Week Hi</span><span>$117.13</span>
+            </div>
             <div class="info-row"><span>AUM</span><span>$2,698.9 M</span></div>
             <div class="info-row"><span>Shares</span><span>24.0 M</span></div>
           </div>
@@ -69,8 +120,12 @@
         <div class="block">
           <div class="section-title">Historical Trading Data</div>
           <div class="info-list">
-            <div class="info-row"><span>1 Month Avg. Volume</span><span>142,382</span></div>
-            <div class="info-row"><span>3 Month Avg. Volume</span><span>241,087</span></div>
+            <div class="info-row">
+              <span>1 Month Avg. Volume</span><span>142,382</span>
+            </div>
+            <div class="info-row">
+              <span>3 Month Avg. Volume</span><span>241,087</span>
+            </div>
           </div>
         </div>
       </div>
@@ -85,7 +140,7 @@
         </div>
         <div class="block"></div>
       </div>
-        <!-- 第五行：FactSet Equity: U.S. - Large Cap Segment -->
+      <!-- 第五行：FactSet Equity: U.S. - Large Cap Segment -->
       <div class="">
         <div class="block">
           <EtfCompareTable
@@ -101,30 +156,90 @@
 </template>
 
 <script setup lang="ts">
-import EtfCompareTable from '@/components/EtfCompareTable.vue'
+import EtfCompareTable from "@/components/EtfCompareTable.vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const columns = [
-  { key: 'type', label: 'Type' },
-  { key: 'symbol', label: 'Symbol', isLink: true },
-  { key: 'expenseRatio', label: 'Expense Ratio' },
-  { key: 'assets', label: 'Assets' },
-  { key: 'avgDailyVol', label: 'Avg. Daily Vol' },
-  { key: 'ytdReturn', label: 'YTD Return' }
-]
+  { key: "type", label: "Type" },
+  { key: "symbol", label: "Symbol", isLink: true, onClick: (symbol: string) => {
+    router.push(`/details?symbol=${symbol}`);
+  } },
+  { key: "expenseRatio", label: "Expense Ratio" },
+  { key: "assets", label: "Assets" },
+  { key: "avgDailyVol", label: "Avg. Daily Vol" },
+  { key: "ytdReturn", label: "YTD Return" },
+];
 
 const table1 = [
-  { type: 'Cheapest', symbol: 'BKLC', expenseRatio: '0.00%', assets: '$2.7 B', avgDailyVol: '241,087', ytdReturn: '1.06%' },
-  { type: 'Largest (AUM)', symbol: 'VOO', expenseRatio: '0.03%', assets: '$650.2 B', avgDailyVol: '9 M', ytdReturn: '1.08%' },
-  { type: 'Most Liquid (Volume)', symbol: 'QQQ', expenseRatio: '0.20%', assets: '$328.0 B', avgDailyVol: '50 M', ytdReturn: '1.72%' },
-  { type: 'Top YTD Performer', symbol: 'HERO', expenseRatio: '0.50%', assets: '$135.4 M', avgDailyVol: '51,732', ytdReturn: '22.57%' }
-]
+  {
+    type: "Cheapest",
+    symbol: "BKLC",
+    expenseRatio: "0.00%",
+    assets: "$2.7 B",
+    avgDailyVol: "241,087",
+    ytdReturn: "1.06%",
+  },
+  {
+    type: "Largest (AUM)",
+    symbol: "VOO",
+    expenseRatio: "0.03%",
+    assets: "$650.2 B",
+    avgDailyVol: "9 M",
+    ytdReturn: "1.08%",
+  },
+  {
+    type: "Most Liquid (Volume)",
+    symbol: "QQQ",
+    expenseRatio: "0.20%",
+    assets: "$328.0 B",
+    avgDailyVol: "50 M",
+    ytdReturn: "1.72%",
+  },
+  {
+    type: "Top YTD Performer",
+    symbol: "HERO",
+    expenseRatio: "0.50%",
+    assets: "$135.4 M",
+    avgDailyVol: "51,732",
+    ytdReturn: "22.57%",
+  },
+];
 
 const table2 = [
-  { type: 'Cheapest', symbol: 'BKLC', expenseRatio: '0.00%', assets: '$2.7 B', avgDailyVol: '241,087', ytdReturn: '1.06%' },
-  { type: 'Largest (AUM)', symbol: 'VOO', expenseRatio: '0.03%', assets: '$650.2 B', avgDailyVol: '9 M', ytdReturn: '1.08%' },
-  { type: 'Most Liquid (Volume)', symbol: 'QQQ', expenseRatio: '0.20%', assets: '$328.0 B', avgDailyVol: '50 M', ytdReturn: '1.72%' },
-  { type: 'Top YTD Performer', symbol: 'SPD', expenseRatio: '0.53%', assets: '$88.6 M', avgDailyVol: '62,519', ytdReturn: '11.14%' }
-]
+  {
+    type: "Cheapest",
+    symbol: "BKLC",
+    expenseRatio: "0.00%",
+    assets: "$2.7 B",
+    avgDailyVol: "241,087",
+    ytdReturn: "1.06%",
+  },
+  {
+    type: "Largest (AUM)",
+    symbol: "VOO",
+    expenseRatio: "0.03%",
+    assets: "$650.2 B",
+    avgDailyVol: "9 M",
+    ytdReturn: "1.08%",
+  },
+  {
+    type: "Most Liquid (Volume)",
+    symbol: "QQQ",
+    expenseRatio: "0.20%",
+    assets: "$328.0 B",
+    avgDailyVol: "50 M",
+    ytdReturn: "1.72%",
+  },
+  {
+    type: "Top YTD Performer",
+    symbol: "SPD",
+    expenseRatio: "0.53%",
+    assets: "$88.6 M",
+    avgDailyVol: "62,519",
+    ytdReturn: "11.14%",
+  },
+];
 </script>
 
 <style scoped lang="scss">
@@ -183,10 +298,13 @@ const table2 = [
 .info-row .link {
   color: var(--theme-purple);
   cursor: pointer;
-  text-decoration: underline;
+  &:hover {
+    text-decoration: underline;
+  }
 }
+
 .fa-report-btn {
-  background:  var(--theme-purple);
+  background: var(--theme-purple);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -212,7 +330,7 @@ const table2 = [
   margin-left: 6px;
   font-size: 14px;
 }
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .row {
     flex-direction: column;
     gap: 0;

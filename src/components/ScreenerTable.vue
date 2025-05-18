@@ -58,7 +58,7 @@ const handleJump = (url: string) => {
       {{ description }}
     </div>
     <div class="table-scroll">
-      <el-table :data="tableData" border style="min-width: 900px;">
+      <el-table :data="tableData" border>
         <el-table-column
           v-for="column in tableColumns"
           :key="column.prop"
@@ -149,13 +149,10 @@ const handleJump = (url: string) => {
   }
 }
 .table-scroll {
-  width: 100%;
   min-width: 0;
-  max-width: 100%;
   overflow-x: auto;
 }
 :deep(.el-table) {
-  min-width: 900px;
   max-width: 100%;
 }
 .link-cell {

@@ -54,3 +54,10 @@ html, body {
     padding: 0 $spacing-small;
   }
 }
+.linkStyle{
+  color: var(--theme-purple)!important;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline!important;
+  }
+}

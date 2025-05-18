@@ -6,7 +6,7 @@
     </p>
     <div class="expense-and-fee-container">
       <div class="quick-facts">
-        <h4 class="quick-facts-title">Expenses Ratio Analysis</h4>
+        <h3 class="quick-facts-title">Expenses Ratio Analysis</h3>
         <QuickFacts :facts="facts"></QuickFacts>
       </div>
       <div class="block">

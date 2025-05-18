@@ -24,7 +24,7 @@
           </thead>
           <tbody>
             <tr v-for="issuer in issuers" :key="issuer.name">
-              <td class="issuer-name">{{ issuer.name }}</td>
+              <td class="linkStyle" @click="router.push(`/proshares?issuer=${issuer.name}`)">{{ issuer.name }}</td>
               <td>{{ issuer.aum }}</td>
               <td>{{ issuer.funds }}</td>
               <td>{{ issuer.er }}</td>
@@ -63,6 +63,8 @@
 import { computed, ref } from "vue";
 import ScreenerTable from '@/components/ScreenerTable.vue';
 import QuickFacts from '@/components/QuickFacts.vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const facts = ref([
   { label: "# of Funds", value: 50 },
   { label: "Total AUM ($,M)", value: "$54,303.11" },
@@ -120,8 +122,8 @@ function toggleShowAll() {
 const description = 'This is a list of all US-traded ETFs that are currently included in the Asia Pacific Equities ETF Database Category by the ETF Database staff. Each ETF is placed in a single “best fit” ETF Database Category; if you want to browse ETFs with more flexible selection criteria, visit our screener. To see more information of the Asia Pacific Equities ETFs, click on one of the tabs above.'
 // 表头配置
 const tableColumns = ref([
-  { prop: 'symbol', label: 'Symbol',type:'link',url:'/etf-detail' },
-  { prop: 'name', label: 'ETF Name',type:'link',url:'/etf-detail' },
+  { prop: 'symbol', label: 'Symbol',type:'link',url:'/details' },
+  { prop: 'name', label: 'ETF Name',type:'link',url:'/details' },
   { prop: 'asset', label: 'Asset Class' },
   { prop: 'total', label: 'Total Assets ($MM)' },
   { prop: 'ytd', label: 'YTD Price Change' },
@@ -215,7 +217,6 @@ const activeTab = ref('overview')
   font-size: 1rem;
 }
 .issuers-table tbody td {
-  color: #222;
   font-size: 1rem;
   padding: 10px 0;
   border-bottom: 1px solid #e0e0e0;
@@ -223,11 +224,6 @@ const activeTab = ref('overview')
 }
 .issuers-table tbody tr:last-child td {
   border-bottom: none;
-}
-.issuer-name {
-  color: #2d2d7f;
-  font-weight: 500;
-  min-width: 140px;
 }
 .issuers-link-row {
   border-top: 1.5px solid #e0e0e0;
@@ -237,14 +233,14 @@ const activeTab = ref('overview')
   padding-bottom: 2px;
 }
 .issuers-link {
-  color: #7c6fc9;
+  color: var(--theme-purple);
   font-size: 1rem;
   text-decoration: none;
   font-weight: 400;
   transition: color 0.2s;
 }
 .issuers-link:hover {
-  color: #4b3fa7;
+  color: var(--theme-purple);
   text-decoration: underline;
 }
 .issuers-date {

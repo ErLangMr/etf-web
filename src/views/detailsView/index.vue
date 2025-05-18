@@ -16,9 +16,8 @@
       </div>
       <div>
         <span class="details-info-label">Category:</span>
-        <a href="#" style="color: var(--theme-purple)"
-          >Large Cap Growth Equities</a
-        >
+        <span class="linkStyle" @click.stop="router.push('/equities')"
+         >Large Cap Growth Equities</span>
       </div>
       <div>
         <span class="details-info-label">Last Updated:</span>
@@ -28,14 +27,15 @@
     <div class="details-content">
       <van-divider :style="{ borderColor: '#dedede' }" />
       <template v-if="!isMobile()">
-        <el-tabs tab-position="left" class="details-tabs">
+        <el-tabs v-model="activeName" tab-position="left" class="details-tabs">
           <el-tab-pane
             v-for="(item, index) in tabList"
             :key="index"
             :label="item.label"
+            :name="item.label"
           >
             <div class="tab-content">
-              <component :is="item.component" />
+              <component :is="item.component" :tabActiveName="activeName" />
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -50,53 +50,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, markRaw } from "vue";
+import { useRouter } from "vue-router";
 import { useDevice } from "@/utils/device";
 import StockProfilePrice from "./components/StockProfilePrice.vue";
 import DividendAndValuation from "./components/DividendAndValuation.vue";
 import ExpenseAndFee from "./components/ExpenseAndFee.vue";
+import Holdings from "./components/Holdings.vue";
+import HoldingAnalysisChart from "./components/HoldingAnalysisChart.vue";
+import PriceAndVolumeChart from "./components/PriceAndVolumeChart.vue";
+import FundFlowChart from "./components/FundFlowChart.vue";
+import PriceAndFlowInfluenceChart from "./components/PriceAndFlowInfluenceChart.vue";
+import Performance from "./components/Performance.vue";
 import { Top } from "@element-plus/icons-vue";
+const router = useRouter();
 const { isMobile } = useDevice();
+const activeName = ref("股票简介和价格");
 const tabList = ref([
   {
     label: "股票简介和价格",
-    component: StockProfilePrice,
+    component: markRaw(StockProfilePrice),
   },
   {
     label: "股息和估值",
-    component: DividendAndValuation,
+    component: markRaw(DividendAndValuation),
   },
   {
     label: "费用率和费用",
-    component: ExpenseAndFee,
+    component: markRaw(ExpenseAndFee),
   },
   {
     label: "控股",
-    component: "Holdings",
+    component: markRaw(Holdings),
   },
   {
     label: "持股分析图表",
-    component: "HoldingAnalysisChart",
+    component: markRaw(HoldingAnalysisChart),
   },
   {
     label: "价格和数量图表",
-    component: "PriceAndVolumeChart",
+    component: markRaw(PriceAndVolumeChart),
   },
   {
     label: "基金流动图表",
-    component: "FundFlowChart",
+    component: markRaw(FundFlowChart),
   },
   {
     label: "价格与流量影响力图表",
-    component: "PriceAndFlowInfluenceChart",
+    component: markRaw(PriceAndFlowInfluenceChart),
   },
-  {
-    label: "ESG",
-    component: "ESG",
-  },
+  // {
+  //   label: "ESG",
+  //   component: "ESG",
+  // },
   {
     label: "性能",
-    component: "Performance",
+    component: markRaw(Performance),
   },
 ]);
 </script>

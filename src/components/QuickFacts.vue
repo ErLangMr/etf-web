@@ -20,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 const props = defineProps<{
   facts: { title?: string; label: string; value: string | number }[];
   title?: string;

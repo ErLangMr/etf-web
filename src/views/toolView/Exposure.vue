@@ -78,8 +78,8 @@ const etfList = ref([
 
 // 表头配置
 const tableColumns = ref([
-  { prop: 'Ticker', label: 'Ticker',type:'link',url:'/etf-detail' },
-  { prop: 'ETf', label: 'ETF',type:'link',url:'/etf-detail' },
+  { prop: 'Ticker', label: 'Ticker',type:'link',url:'/details' },
+  { prop: 'ETf', label: 'ETF',type:'link',url:'/details' },
   { prop: 'ETF Database Category', label: 'ETF Database Category',type:'link',url:'/equities' },
   { prop: 'Expense Ratio', label: 'Expense Ratio' },
   { prop: 'Weighting', label: 'Weighting' }
