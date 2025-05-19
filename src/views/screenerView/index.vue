@@ -13,7 +13,8 @@ const ScreenerComponent = computed(() => {
 </script>
 
 <template>
-  <component :is="ScreenerComponent" />
+  <!-- <component :is="ScreenerComponent" /> -->
+   <ScreenerPC />
 </template>
 
 <style scoped lang="scss">

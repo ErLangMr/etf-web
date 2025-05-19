@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { QuestionFilled } from '@element-plus/icons-vue'
-import type { PropType } from 'vue'
+import { ref, type PropType } from 'vue'
+import { useDevice } from '@/utils/device'
+
+const { isMobile } = useDevice()
 
 defineProps({
   tableColumns: {
@@ -36,6 +39,10 @@ const handleTabClick = (tab: string) => {
 const handleJump = (url: string) => {
   router.push(`${url}`)
 }
+const expanded = ref<string | null>(null);
+const toggleExpand = (symbol: string) => {
+  expanded.value = expanded.value === symbol ? null : symbol;
+};
 </script>
 <template>
   <div class="screener-table-area">
@@ -57,7 +64,7 @@ const handleJump = (url: string) => {
     <div v-if="description" class="description">
       {{ description }}
     </div>
-    <div class="table-scroll">
+    <div class="table-scroll" v-if="!isMobile()">
       <el-table :data="tableData" border>
         <el-table-column
           v-for="column in tableColumns"
@@ -75,6 +82,38 @@ const handleJump = (url: string) => {
           </template>
         </el-table-column>
       </el-table>
+    </div>
+    <div class="mobile-etf-list" v-if="isMobile()"">
+      <div v-for="etf in tableData" :key="etf.symbol" class="etf-row-card">
+        <div class="etf-row-summary" @click="toggleExpand(etf.symbol)">
+          <span class="symbol">{{ etf.symbol }}</span>
+          <span class="symbol-divider">-</span>
+          <span class="name">{{ etf.name }}</span>
+          <span class="arrow" :class="{ expanded: expanded === etf.symbol }">
+            <van-icon name="arrow" />
+          </span>
+        </div>
+        <transition name="fade">
+          <div v-if="expanded === etf.symbol" class="etf-row-detail">
+            <div
+              v-for="header in tableColumns"
+              :key="header.prop"
+              class="etf-detail-item"
+            >
+              <span class="label">{{ header.label }}：</span>
+              <span
+                class="value linkStyle"
+                v-if="header.type === 'link'"
+                @click="router.push(header.url)"
+                >{{ etf[header.prop as keyof typeof etf] }}</span
+              >
+              <span class="value" v-else>{{
+                etf[header.prop as keyof typeof etf]
+              }}</span>
+            </div>
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -160,6 +199,97 @@ const handleJump = (url: string) => {
   text-decoration: none;
   &:hover {
     text-decoration: underline;
+  }
+}
+@media (max-width: 768px) {
+  .mobile-etf-list {
+  padding: 8px;
+  .etf-row-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid #e8e8f5;
+    border-right: 4px solid #e8e8f5;
+    border-top: 4px solid #e8e8f5;
+    border-bottom: 2px solid #e8e8f5;
+    box-sizing: border-box;
+    // margin-bottom: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+    &:active,
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    .etf-row-summary {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+      .symbol-divider {
+        margin: 0 3px;
+      }
+      .name {
+        flex: 1;
+        margin-right: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .arrow {
+        font-size: 16px;
+        font-weight: 600;
+        transition: transform 0.2s;
+        color: var(--theme-purple);
+        &.expanded {
+          transform: rotate(90deg);
+        }
+      }
+    }
+    .etf-row-detail {
+      padding: 10px 14px 14px 14px;
+      background: #f9f9fb;
+      .etf-detail-item {
+        display: flex;
+        font-size: 14px;
+        padding: 6px 0;
+        justify-content: space-between;
+        border-bottom: 1px solid #f0f0f0;
+        &:last-child {
+          border-bottom: none;
+        }
+        .label {
+          color: #888;
+          min-width: 140px;
+          flex-shrink: 0;
+        }
+        .value {
+          color: #222;
+          font-weight: 500;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+}
+@media (max-width: 768px) {
+  .mobile-etf-list {
+    padding: 0;
+    .etf-row-card {
+      border-radius: 0;
+      // margin-bottom: 8px;
+    }
   }
 }
 </style>

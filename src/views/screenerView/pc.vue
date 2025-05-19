@@ -1,9 +1,12 @@
 <script setup lang="ts">
 // PC 端特有的逻辑和状态
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, computed } from 'vue'
 import ScreenerFilter from '@/components/ScreenerFilter.vue'
 import type { FilterItem } from '@/components/ScreenerFilter.vue'
 import ScreenerTable from '@/components/ScreenerTable.vue'
+import { useDevice } from '@/utils/device'
+import { Operation } from '@element-plus/icons-vue'
+const { isMobile } = useDevice()
 
 // 一级资产类型
 const assetClasses: FilterItem[] = [
@@ -29,6 +32,7 @@ const assetClasses: FilterItem[] = [
   ] },
 ]
 
+const mobileFilterRef = ref()
 const selectedChild = ref('')
 const selectedItems = ref<string[]>([])
 
@@ -74,6 +78,14 @@ const filterTabs = [
 ]
 const activeTab = ref('overview')
 
+const showMobileFilter = ref(false)
+function openMobileFilter() {
+  showMobileFilter.value = true
+}
+function closeMobileFilter() {
+  showMobileFilter.value = false
+}
+
 onMounted(() => {
   nextTick(() => {
     // 横向筛选菜单相关逻辑精简，无需折叠和更多按钮
@@ -83,12 +95,33 @@ onMounted(() => {
 
 <template>
   <div class="screener-pc">
-    <div class="filter-left">
+    <!-- 移动端 Filter 按钮 -->
+    <button class="mobile-filter-btn" @click="openMobileFilter" v-show="isMobile()"><Operation />筛选</button>
+    <!-- PC端筛选器 -->
+    <div class="filter-left pc-filter" v-show="!isMobile()">
       <ScreenerFilter
         :filter-data="assetClasses"
         v-model:selected-child="selectedChild"
         v-model:selected-items="selectedItems"
       />
+    </div>
+    <!-- 移动端遮罩和弹窗 -->
+    <div v-if="showMobileFilter" class="mobile-filter-mask">
+      <div class="mobile-filter-panel">
+        <div class="mobile-filter-header">
+          <span>筛选器</span>
+          <button class="reset-btn" @click="mobileFilterRef?.resetFilters()">重置</button>
+          <span class="close-btn" @click="closeMobileFilter">×</span>
+        </div>
+        <div class="mobile-filter-content">
+          <ScreenerFilter
+            ref="mobileFilterRef"
+            :filter-data="assetClasses"
+            v-model:selected-child="selectedChild"
+            v-model:selected-items="selectedItems"
+          />
+        </div>
+      </div>
     </div>
     <ScreenerTable
       class="table-area"
@@ -118,5 +151,111 @@ onMounted(() => {
   flex: 1;
   min-width: 0;
   margin-left: 20px;
+}
+// 移动端样式
+.mobile-filter-btn {
+  display: none;
+  position: fixed;
+  top: 95px;
+  right: calc(50% - 45px);
+  z-index: 1001;
+  background: var(--theme-purple);
+  border: 1px solid var(--theme-purple);
+  border-radius: 4px;
+  padding: 5px 20px;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  color: #fff;
+  svg{
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+}
+.mobile-filter-mask {
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: flex-end;
+}
+.mobile-filter-panel {
+  background: #fff;
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: none;
+  border: none;
+}
+.mobile-filter-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 18px 20px 12px 20px;
+  font-size: 22px;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  position: relative;
+  gap: 12px;
+  span {
+    font-weight: 600;
+  }
+  .reset-btn {
+    margin-left: 12px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #888;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 12px;
+    border-radius: 5px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    &:hover {
+      background: #e6e6e6;
+      color: #409eff;
+      border-color: #409eff;
+    }
+  }
+  .close-btn {
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    position: absolute;
+    right: 20px;
+    top: 16px;
+  }
+}
+.mobile-filter-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 24px 0;
+}
+// 响应式：移动端显示移动筛选，隐藏PC筛选
+@media (max-width: 768px) {
+  :deep(.filters-header) {
+    display: none !important;
+  }
+  .filter-left.pc-filter {
+    display: none !important;
+  }
+  .mobile-filter-btn {
+    display: block;
+  }
+  .table-area {
+    margin-left: 0;
+  }
+  .mobile-filter-panel {
+    width: 100vw;
+    max-width: none;
+    border-radius: 0;
+  }
 }
 </style>

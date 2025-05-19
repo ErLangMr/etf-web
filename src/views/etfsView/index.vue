@@ -214,11 +214,15 @@ $desc-color: #444;
       margin-bottom: 1rem;
     }
     .etf-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
       margin-bottom: 1rem;
       .etf-tab-btn {
         font-size: 0.95rem;
         height: 36px;
-        padding: 0.4rem;
+        padding: 0.4rem 0;
+        border-radius: 0;
       }
     }
     .etf-table-section {

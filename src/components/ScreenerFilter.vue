@@ -91,6 +91,8 @@ function resetFilters() {
   emit('update:selectedChild', '')
 }
 
+defineExpose({ resetFilters })
+
 // 处理复选框变化事件
 function handleCheckboxChange(value: string, checked: boolean) {
   if (checked) {
@@ -346,6 +348,16 @@ function onChange(value: number | number[], index: number) {
       padding: 8px 0;
       color: #666;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .filters {
+    width: 100vw !important;
+    min-width: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 }
 </style>

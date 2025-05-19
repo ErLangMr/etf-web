@@ -153,13 +153,13 @@ const etfList = ref([
 ]);
 
 const tableHeaders = [
-  { label: "Symbol", key: "symbol" },
-  { label: "ETF Name", key: "name" },
-  { label: "Asset Class", key: "asset" },
-  { label: "Total Assets ($MM)", key: "total" },
-  { label: "YTD Price Change", key: "ytd" },
-  { label: "Avg. Daily Share Volume (3mo)", key: "volume" },
-  { label: "Previous Closing Price", key: "price" },
+  { label: "Symbol", prop: "symbol",type:'link',url:'/details' },
+  { label: "ETF Name", prop: "name",type:'link',url:'/details' },
+  { label: "Asset Class", prop: "asset" },
+  { label: "Total Assets ($MM)", prop: "total" },
+  { label: "YTD Price Change", prop: "ytd" },
+  { label: "Avg. Daily Share Volume (3mo)", prop: "volume" },
+  { label: "Previous Closing Price", prop: "price" },
 ];
 
 const expanded = ref<string | null>(null);
@@ -169,7 +169,7 @@ const toggleExpand = (symbol: string) => {
 </script>
 
 <template>
-  <div class="screener-mobile-etf-list">
+  <div class="mobile-etf-list">
     <div v-for="etf in etfList" :key="etf.symbol" class="etf-row-card">
       <div class="etf-row-summary" @click="toggleExpand(etf.symbol)">
         <span class="symbol">{{ etf.symbol }}</span>
@@ -183,18 +183,18 @@ const toggleExpand = (symbol: string) => {
         <div v-if="expanded === etf.symbol" class="etf-row-detail">
           <div
             v-for="header in tableHeaders"
-            :key="header.key"
+            :key="header.prop"
             class="etf-detail-item"
           >
             <span class="label">{{ header.label }}：</span>
             <span
               class="value linkStyle"
-              v-if="header.key === 'symbol' || header.key === 'name'"
-              @click="router.push(`/details?symbol=${etf.symbol}`)"
-              >{{ etf[header.key as keyof typeof etf] }}</span
+              v-if="header.type === 'link'"
+              @click="router.push(header.url)"
+              >{{ etf[header.prop as keyof typeof etf] }}</span
             >
             <span class="value" v-else>{{
-              etf[header.key as keyof typeof etf]
+              etf[header.prop as keyof typeof etf]
             }}</span>
           </div>
         </div>
@@ -204,7 +204,7 @@ const toggleExpand = (symbol: string) => {
 </template>
 
 <style scoped lang="scss">
-.screener-mobile-etf-list {
+.mobile-etf-list {
   padding: 8px;
   .etf-row-card {
     background: #fff;
@@ -285,7 +285,7 @@ const toggleExpand = (symbol: string) => {
   transform: translateY(-8px);
 }
 @media (max-width: 768px) {
-  .screener-mobile-etf-list {
+  .mobile-etf-list {
     padding: 0;
     .etf-row-card {
       border-radius: 0;
