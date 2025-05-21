@@ -39,9 +39,13 @@ const maxVolume = Math.max(...volumeData);
 
 watch(() => props.tabActiveName, (newVal) => {
   if (newVal === '价格和数量图表') {
-    initChart()
+    console.log('条件匹配，准备初始化图表');
+    nextTick(() => {
+      initChart();
+    });
   }
-})
+}, { immediate: true });
+
 const initChart = async () => {
   await nextTick()
   if (chartRef.value) {

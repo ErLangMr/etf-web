@@ -10,16 +10,26 @@
 </template>
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, nextTick, watch } from "vue";
+import { useDevice } from "@/utils/device";
 import * as echarts from "echarts";
 const props = defineProps<{
   tabActiveName: string;
 }>();
-
+const { isMobile } = useDevice();
 watch(() => props.tabActiveName, (newVal) => {
   if (newVal === '价格与流量影响力图表') {
-    initChart()
+    nextTick(() => {
+      initChart()
+    })
   }
-})
+}, { immediate: true });
+
+function resizeChart() {
+  if (myChart) {
+    myChart.resize();
+  }
+}
+
 const initChart = async () => {
   await nextTick()
   const chartDom = document.getElementById("price-and-flow-influence-chart")!;
@@ -40,8 +50,8 @@ const initChart = async () => {
       xAxis: {
         type: 'category',
         data: chartData.dates,
-        axisTick: { alignWithLabel: true },
-        axisLabel: { interval: 2 } // 只显示部分日期，防止重叠
+        // axisTick: { alignWithLabel: true },
+        // axisLabel: { interval: 2 } // 只显示部分日期，防止重叠
       },
       yAxis: {
         type: 'value',
@@ -59,7 +69,7 @@ const initChart = async () => {
           stack: 'one',
           data: chartData.priceInfluence,
           itemStyle: { color: '#2D1C5A' },
-          barWidth: 16
+          // barWidth: isMobile() ? 8 : 16
         },
         {
           name: 'Fund Flow',
@@ -67,10 +77,11 @@ const initChart = async () => {
           stack: 'one',
           data: chartData.fundFlow,
           itemStyle: { color: '#1CA9A6' },
-          barWidth: 16
+          // barWidth: isMobile() ? 8 : 16
         }
       ]
     });
+    window.addEventListener("resize", resizeChart);
 }
 const chartData = {
   dates: [
@@ -97,6 +108,7 @@ onBeforeUnmount(() => {
   if (myChart) {
     myChart.dispose();
   }
+  window.removeEventListener("resize", resizeChart);
 });
 </script>
 <style scoped lang="scss">

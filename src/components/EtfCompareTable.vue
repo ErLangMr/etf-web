@@ -4,10 +4,10 @@
     <div class="section-title" v-if="title">{{ title }}</div>
     <slot></slot>
     <div class="etf-table">
-      <div class="table-header">
+      <div class="table-header" :style="{ gridTemplateColumns: gridTemplateColumns }">
         <div v-for="col in columns" :key="col.key">{{ col.label }}</div>
       </div>
-      <div class="table-row" v-for="(row, idx) in data" :key="idx">
+      <div class="table-row" v-for="(row, idx) in data" :key="idx" :style="{ gridTemplateColumns: gridTemplateColumns }">
         <div v-for="col in columns" :key="col.key">
           <span
             v-if="col.isLink"
@@ -22,11 +22,16 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue';
+
+const props = defineProps<{
   title?: string
   columns: Array<{ key: string, label: string, isLink?: boolean, onClick?: Function }>
   data: Array<Record<string, any>>
 }>()
+const gridTemplateColumns = computed(() => {
+  return `repeat(${props.columns.length}, 1fr)`
+})
 </script>
 
 <style scoped lang="scss">
@@ -48,7 +53,7 @@ defineProps<{
 .table-header, .table-row {
   display: grid;
   // grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  // grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   align-items: center;
 }
 .table-header {

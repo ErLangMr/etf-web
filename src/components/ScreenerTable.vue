@@ -83,18 +83,40 @@ const toggleExpand = (symbol: string) => {
         </el-table-column>
       </el-table>
     </div>
-    <div class="mobile-etf-list" v-if="isMobile()"">
+    <div class="mobile-etf-list" v-if="isMobile()">
       <div v-for="etf in tableData" :key="etf.symbol" class="etf-row-card">
-        <div class="etf-row-summary" @click="toggleExpand(etf.symbol)">
-          <span class="symbol">{{ etf.symbol }}</span>
-          <span class="symbol-divider">-</span>
-          <span class="name">{{ etf.name }}</span>
-          <span class="arrow" :class="{ expanded: expanded === etf.symbol }">
-            <van-icon name="arrow" />
-          </span>
-        </div>
-        <transition name="fade">
-          <div v-if="expanded === etf.symbol" class="etf-row-detail">
+        <template v-if="etf.symbol && etf.name">
+          <div class="etf-row-summary" @click="toggleExpand(etf.symbol)">
+            <span class="symbol">{{ etf.symbol }}</span>
+            <span class="symbol-divider">-</span>
+            <span class="name">{{ etf.name }}</span>
+            <span class="arrow" :class="{ expanded: expanded === etf.symbol }">
+              <van-icon name="arrow" />
+            </span>
+          </div>
+          <transition name="fade">
+            <div v-if="expanded === etf.symbol" class="etf-row-detail">
+              <div
+                v-for="header in tableColumns"
+                :key="header.prop"
+                class="etf-detail-item"
+              >
+                <span class="label">{{ header.label }}：</span>
+                <span
+                  class="value linkStyle"
+                  v-if="header.type === 'link'"
+                  @click="router.push(header.url)"
+                  >{{ etf[header.prop as keyof typeof etf] }}</span
+                >
+                <span class="value" v-else>{{
+                  etf[header.prop as keyof typeof etf]
+                }}</span>
+              </div>
+            </div>
+          </transition>
+        </template>
+        <template v-else>
+          <div class="etf-row-detail">
             <div
               v-for="header in tableColumns"
               :key="header.prop"
@@ -112,7 +134,7 @@ const toggleExpand = (symbol: string) => {
               }}</span>
             </div>
           </div>
-        </transition>
+        </template>
       </div>
     </div>
   </div>

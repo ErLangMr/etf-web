@@ -16,9 +16,11 @@ const props = defineProps<{
 
 watch(() => props.tabActiveName, (newVal) => {
   if (newVal === '基金流动图表') {
-    initChart()
+    nextTick(() => {
+      initChart()
+    })
   }
-})
+}, { immediate: true });
 function getRecentDates(days: number) {
   const arr: string[] = [];
   const today = new Date("2025-05-16");

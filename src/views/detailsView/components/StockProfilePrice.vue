@@ -335,5 +335,8 @@ const table2 = [
     flex-direction: column;
     gap: 0;
   }
+  .block {
+    margin-bottom: 40px;
+  }
 }
 </style>

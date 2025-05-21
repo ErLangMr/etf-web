@@ -6,8 +6,11 @@ import type { FilterItem } from '@/components/ScreenerFilter.vue'
 import ScreenerTable from '@/components/ScreenerTable.vue'
 import { useDevice } from '@/utils/device'
 import { Operation } from '@element-plus/icons-vue'
+import { getFilterTable } from '@/api/filterTable'
 const { isMobile } = useDevice()
-
+getFilterTable().then(res => {
+  console.log(res,11111)
+})
 // 一级资产类型
 const assetClasses: FilterItem[] = [
   { label: 'Asset Class', value: 'assetClass', children: [

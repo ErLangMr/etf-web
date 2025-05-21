@@ -33,9 +33,10 @@ const toggleMenu = () => {
             <img src="@/assets/VettaFi.svg" alt="Logo" />
           </div>
           <nav class="nav desktop-nav" v-if="!isMobile()">
-            <RouterLink to="/screener" class="nav-item">XX</RouterLink>
-            <RouterLink to="/etfs" class="nav-item">XXX</RouterLink>
-            <RouterLink to="/tool" class="nav-item">XXXX</RouterLink>
+            <RouterLink to="/etfs" class="nav-item">ETF分类排行</RouterLink>
+            <RouterLink to="/tool" class="nav-item">ETF投资地域</RouterLink>
+            <RouterLink to="/issuers" class="nav-item">ETF发行人</RouterLink>
+            <RouterLink to="/screener" class="nav-item">ETF筛选器</RouterLink>
           </nav>
         </div>
         <div class="right-section">
@@ -90,9 +91,10 @@ const toggleMenu = () => {
         </el-autocomplete>
       </div>
       <nav class="mobile-nav">
-        <RouterLink to="/screener" class="nav-item" @click="toggleMenu">XX</RouterLink>
-        <RouterLink to="/etfs" class="nav-item" @click="toggleMenu">XX</RouterLink>
-        <RouterLink to="/tool" class="nav-item" @click="toggleMenu">XXXX</RouterLink>
+        <RouterLink to="/etfs" class="nav-item" @click="toggleMenu">ETF分类排行</RouterLink>
+        <RouterLink to="/tool" class="nav-item" @click="toggleMenu">ETF投资地域</RouterLink>
+        <RouterLink to="/issuers" class="nav-item" @click="toggleMenu">ETF发行人</RouterLink>
+        <RouterLink to="/screener" class="nav-item" @click="toggleMenu">ETF筛选器</RouterLink>
       </nav>
     </div>
 

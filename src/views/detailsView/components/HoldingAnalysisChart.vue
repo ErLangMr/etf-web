@@ -3,26 +3,34 @@
     <h2 class="h3">Geographic Exposure</h2>
     <p style="margin-bottom: 40px;">The following charts reflect the geographic spread of IVV's underlying holdings.</p>
     <div class="chart-item">
-      <CustomCharts :sectorData="sectorData" :active="tabActiveName === '持股分析图表'" :title="title" />
+      <CustomCharts :sectorData="sectorData" :active="componentName === '持股分析图表'" :title="title" />
     </div>
     <div class="chart-item">
-      <CustomCharts :sectorData="sectorData" :active="tabActiveName === '持股分析图表'" :title="title" />
+      <CustomCharts :sectorData="sectorData" :active="componentName === '持股分析图表'" :title="title" />
     </div>
     <div class="chart-item">
-      <CustomCharts :sectorData="sectorData" :active="tabActiveName === '持股分析图表'" :title="title" />
+      <CustomCharts :sectorData="sectorData" :active="componentName === '持股分析图表'" :title="title" />
     </div>
     <div class="chart-item">
-      <CustomCharts :sectorData="sectorData" :active="tabActiveName === '持股分析图表'" :title="title" />
+      <CustomCharts :sectorData="sectorData" :active="componentName === '持股分析图表'" :title="title" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import CustomCharts from '@/components/CustomCharts.vue'
 const props = defineProps<{
   tabActiveName: string
 }>()
+const componentName = ref('')
+watch(() => props.tabActiveName, (newVal) => {
+  if (newVal === '持股分析图表') {
+    nextTick(() => {
+      componentName.value = '持股分析图表'
+    })
+  }
+}, { immediate: true });
 const title = ref('Region\nBreakdown')
 const sectorData = ref([
 { name: 'Electronic Technology', value: 21.94 },

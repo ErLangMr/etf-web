@@ -40,9 +40,24 @@
           </el-tab-pane>
         </el-tabs>
       </template>
-      <div v-else>
-        <div v-for="(item, index) in tabList" :key="index">
-          <span>{{ item.label }}</span>
+      <div v-if="isMobile()">
+        <el-select
+          v-model="mobildSelect"
+          @change="handleChange"
+          placeholder="Select"
+          style="width: 100%;margin-bottom: 20px;">
+          <el-option
+            v-for="(item, index) in tabList"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <div class="tab-content">
+          <component
+            :is="tabList.find(tab => tab.value === mobildSelect)?.component || StockProfilePrice"
+            :tabActiveName="componentName"
+          />
         </div>
       </div>
     </div>
@@ -50,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, markRaw } from "vue";
+import { ref, markRaw, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useDevice } from "@/utils/device";
 import StockProfilePrice from "./components/StockProfilePrice.vue";
@@ -66,37 +81,53 @@ import { Top } from "@element-plus/icons-vue";
 const router = useRouter();
 const { isMobile } = useDevice();
 const activeName = ref("股票简介和价格");
+const mobildSelect = ref('StockProfilePrice');
+const componentName = ref('股票简介和价格');
+
+function handleChange(val: string) {
+  const selectedTab = tabList.value.find(tab => tab.value === val);
+  componentName.value = selectedTab?.label as string;
+}
+
 const tabList = ref([
   {
     label: "股票简介和价格",
+    value: 'StockProfilePrice',
     component: markRaw(StockProfilePrice),
   },
   {
     label: "股息和估值",
+    value: 'DividendAndValuation',
     component: markRaw(DividendAndValuation),
   },
   {
     label: "费用率和费用",
+    value: 'ExpenseAndFee',
     component: markRaw(ExpenseAndFee),
   },
   {
     label: "控股",
+    value: 'Holdings',
     component: markRaw(Holdings),
   },
   {
     label: "持股分析图表",
+    value: 'HoldingAnalysisChart',
     component: markRaw(HoldingAnalysisChart),
   },
   {
     label: "价格和数量图表",
+    value: 'PriceAndVolumeChart',
     component: markRaw(PriceAndVolumeChart),
   },
   {
     label: "基金流动图表",
+    value: 'FundFlowChart',
     component: markRaw(FundFlowChart),
   },
   {
     label: "价格与流量影响力图表",
+    value: 'PriceAndFlowInfluenceChart',
     component: markRaw(PriceAndFlowInfluenceChart),
   },
   // {
@@ -105,6 +136,7 @@ const tabList = ref([
   // },
   {
     label: "性能",
+    value: 'Performance',
     component: markRaw(Performance),
   },
 ]);
