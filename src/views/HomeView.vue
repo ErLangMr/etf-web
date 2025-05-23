@@ -5,26 +5,26 @@ import { useRouter } from 'vue-router'
 
 const cards = [
   {
-    title: 'ETF Screener',
-    desc: 'Screen ETFs based on asset class, issuer, market cap, expense ratio, and more.',
+    title: 'ETF筛选器',
+    desc: '根据资产类别、发行人、市值、费用率等筛选 ETF。',
     icon: Setting,
     path: '/screener'
   },
   {
-    title: 'ETFs by Type',
-    desc: 'ETFs are tagged by the ETF Database staff with more than one type; e.g. "leveraged", "government bond" and "bond"',
+    title: 'ETF 类型',
+    desc: 'ETF数据库工作人员将 ETF 标记为多种类型；例如“杠杆”、“政府债券”和“债券”',
     icon: Edit,
     path: '/etfs'
   },
   {
-    title: 'ETFs by Geography',
-    desc: 'Looking to add country specific exposure to your portfolio? Use our Country Exposure Tool!',
+    title: 'ETF 地域分布',
+    desc: '想要为您的投资组合添加特定国家/地区的敞口吗？使用我们的国家/地区敞口工具！',
     icon: Location,
     path: '/tool'
   },
   {
-    title: 'ETFs by Issuer',
-    desc: 'Use our database tool to find ETFs issued by one of over 70 different issuers quickly and easily.',
+    title: 'ETF（按发行人分类）',
+    desc: '使用我们的数据库工具可以快速轻松地查找由 70 多个不同发行人发行的 ETF。',
     icon: OfficeBuilding,
     path: '/issuers'
   }

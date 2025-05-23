@@ -40,7 +40,7 @@ const toggleMenu = () => {
           </nav>
         </div>
         <div class="right-section">
-          <el-autocomplete
+          <!-- <el-autocomplete
             v-if="!isMobile()"
             v-model="searchValue"
             :fetch-suggestions="(query, callback) => {
@@ -59,7 +59,7 @@ const toggleMenu = () => {
                 <span>{{ item.label }}</span>
               </div>
             </template>
-          </el-autocomplete>
+          </el-autocomplete> -->
           <el-button v-if="isMobile()" class="menu-button" @click="toggleMenu">
             <el-icon><Menu /></el-icon>
           </el-button>
@@ -70,7 +70,7 @@ const toggleMenu = () => {
     <!-- 移动端导航菜单 -->
     <div class="mobile-menu" :class="{ 'is-open': isMenuOpen }">
       <div class="mobile-search">
-        <el-autocomplete
+        <!-- <el-autocomplete
           v-model="searchValue"
           :fetch-suggestions="(query, callback) => {
             callback(searchOptions.filter(item =>
@@ -88,7 +88,7 @@ const toggleMenu = () => {
               <span>{{ item.label }}</span>
             </div>
           </template>
-        </el-autocomplete>
+        </el-autocomplete> -->
       </div>
       <nav class="mobile-nav">
         <RouterLink to="/etfs" class="nav-item" @click="toggleMenu">ETF分类排行</RouterLink>

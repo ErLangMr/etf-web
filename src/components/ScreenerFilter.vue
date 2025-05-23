@@ -1,121 +1,530 @@
 // 筛选器组件 - 用于ETF筛选的过滤器组件
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
+import { getTypeByCategoryApi } from "@/api/filterTable";
 
 // 范围类型子项接口
 interface RangeItem {
-  start: number
-  end: number
+  start: number;
+  end: number;
 }
 
 // 基础筛选项接口
 interface BaseFilterItem {
-  label: string
-  value: string
-  type?: string
+  label: string;
+  value: string;
+  type?: string;
 }
 
 // 叶子节点接口
 interface LeafFilterItem extends BaseFilterItem {
-  cont?: number
+  cont?: number;
 }
 
 // 普通筛选项接口
 interface NormalFilterItem extends BaseFilterItem {
-  children?: (NormalFilterItem | LeafFilterItem)[]
+  children?: (NormalFilterItem | LeafFilterItem)[];
+}
+
+// 范围项接口
+interface RangeChildItem {
+  label: string;
+  type: "slider" | "date";
+  paramKeys: string[];
+  range?: [number, number];
+  date?: [string, string];
 }
 
 // 范围筛选项接口
 interface RangeFilterItem extends BaseFilterItem {
-  type: 'slider'
-  children: RangeItem[]
+  type: "slider";
+  children: RangeChildItem[];
 }
 
 // 筛选项联合类型
-export type FilterItem = NormalFilterItem | RangeFilterItem
+export type FilterItem = NormalFilterItem | RangeFilterItem;
 
 // 类型守卫函数
 function isRangeFilterItem(item: FilterItem): item is RangeFilterItem {
-  return item.type === 'slider'
+  return item.type === "slider";
 }
 
 function isLeafFilterItem(item: any): item is LeafFilterItem {
-  return 'cont' in item
+  return "cont" in item;
 }
 
 function isNormalFilterItem(item: any): item is NormalFilterItem {
-  return 'children' in item && !isRangeFilterItem(item)
+  return "children" in item && !isRangeFilterItem(item);
 }
 
 // 组件属性接口定义
-const props = defineProps<{ filterData: FilterItem[] }>()
+// const props = defineProps<{ filterData: FilterItem[] }>()
 // 定义组件事件
-const emit = defineEmits(['update:selectedItems', 'update:selectedChild'])
+const emit = defineEmits(["update:selectedItems", "update:selectedChild"]);
 
 // 当前激活的折叠面板
-const activeNames = ref('assetClass')
+const activeNames = ref("assetClass");
 // 子折叠面板激活项
-const chidActiveName = ref('')
+const chidActiveName = ref("");
 // 选中的子项
-const selectedChild = ref('')
+const selectedChild = ref("");
 // 选中的项目列表
-const selectedItems = ref<string[]>([])
-const sliderValues = ref<Record<string, [number, number]>>({})
+const selectedItems = ref<string[]>([]);
+const sliderValues = ref<Record<string, [number, number]>>({});
+const dateValues = ref<Record<string, [Date, Date]>>({});
 
 // 初始化滑块值
 function initSliderValues() {
-  props.filterData.forEach(item => {
-    if (item.type === 'slider' && item.children) {
-      item.children.forEach((range,index) => {
-        if ('start' in range && 'end' in range) {
-          console.log(sliderValues.value, range, 'range')
-          sliderValues.value[index] = [range.start, range.end]
+  filterData.forEach((item) => {
+    if (item.type === "slider" && item.children) {
+      item.children.forEach((child) => {
+        // 使用面板value和子项索引组合作为key
+        const key = `${item.value}_${child.paramKeys[0]}`;
+        if (child.type === "slider" && child.range) {
+          sliderValues.value[key] = [...child.range] as [number, number];
         }
-      })
+        if (child.type === "date" && child.date) {
+          dateValues.value[key] = [
+            new Date(child.date[0]),
+            new Date(child.date[1]),
+          ];
+        }
+      });
     }
-  })
+  });
+  console.log(sliderValues.value, 4444);
+}
+
+// 一级资产类型
+const filterData = [
+  {
+    label: "资产类别",
+    value: "assetClass",
+    children: [
+      {
+        label: "债券",
+        value: "BOND",
+        classification: [
+          {
+            label: "债券类型",
+            value: "bondType",
+            children: [],
+          },
+          {
+            label: "债券久期",
+            value: "bondDuration",
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "商品",
+        value: "GOODS",
+        classification: [
+          {
+            label: "商品类型",
+            value: "commodityType",
+            children: [],
+          },
+          {
+            label: "商品风险暴露",
+            value: "commodityExposure",
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "股票",
+        value: "EQUITY",
+        classification: [
+          {
+            label: "投资范围",
+            value: "investScope",
+            children: [],
+          },
+          {
+            label: "成分股市值",
+            value: "compMarketCap",
+            children: [],
+          },
+          {
+            label: "投资策略",
+            value: "investStrategy",
+            children: [],
+          },
+          {
+            label: "部门",
+            value: "sector",
+            children: [],
+          },
+          {
+            label: "投资风格",
+            value: "styleAttribute",
+            children: [],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "属性",
+    value: "attributes",
+    children: [
+      {
+        label: "Any",
+        value: "any",
+        cont: 1243,
+      },
+      {
+        label: "Active",
+        value: "active",
+        cont: 344,
+      },
+    ],
+  },
+  {
+    label: "发行人",
+    value: "issuer",
+    children: [],
+  },
+  {
+    label: "费率和分红",
+    value: "expenses",
+    type: "slider",
+    children: [
+      {
+        label: "托管费率区间",
+        type: "slider",
+        paramKeys: ["custodyFeeStart", "custodyFeeEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "单位分红率区间",
+        type: "slider",
+        paramKeys: ["divYieldStart", "divYieldEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "管理费率区间",
+        type: "slider",
+        paramKeys: ["managementFeeStart", "managementFeeEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "销售服务费率区间",
+        type: "slider",
+        paramKeys: ["serviceFeeStart", "serviceFeeEnd"],
+        range: [0, 100],
+      },
+    ],
+  },
+  {
+    label: "流动性和成立日",
+    value: "liquidityAndEstablishmentDate",
+    type: "slider",
+    children: [
+      {
+        label: "日均成交量区间",
+        type: "slider",
+        paramKeys: ["avgDailyVolumeStart", "avgDailyVolumeEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "交易价格区间",
+        type: "slider",
+        paramKeys: ["currentCloseStart", "currentCloseEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "资产规模区间",
+        type: "slider",
+        paramKeys: ["totalMarketValueStart", "totalMarketValueEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "成立日期",
+        type: "date",
+        paramKeys: ["setupDateStart", "setupDateEnd"],
+        date: ["", ""],
+      },
+    ],
+  },
+  {
+    label: "收益",
+    value: "return",
+    type: "slider",
+    children: [
+      {
+        label: "近一周收益区间",
+        type: "slider",
+        paramKeys: ["weeklyReturnsStart", "weeklyReturnsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近一月收益区间",
+        type: "slider",
+        paramKeys: ["monthlyReturnsStart", "monthlyReturnsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "今年以来收益区间",
+        type: "slider",
+        paramKeys: ["ytdReturnsStart", "ytdReturnsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近一年收益区间",
+        type: "slider",
+        paramKeys: ["yearlyReturnsStart", "yearlyReturnsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近三年收益区间",
+        type: "slider",
+        paramKeys: ["threeYearReturnsStart", "threeYearReturnsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近五年收益区间",
+        type: "slider",
+        paramKeys: ["fiveYearReturnsStart", "fiveYearReturnsEnd"],
+        range: [0, 100],
+      },
+    ],
+  },
+  {
+    label: "ESG",
+    value: "esg",
+    type: "slider",
+    children: [
+      {
+        label: "ESG",
+        type: "slider",
+        paramKeys: ["esgScoreStart", "esgScoreEnd"],
+        range: [0, 100],
+      },
+    ],
+  },
+  {
+    label: "资金流",
+    value: "FundFlows",
+    type: "slider",
+    children: [
+      {
+        label: "近 1 周净流入额",
+        type: "slider",
+        paramKeys: ["weeklyNetInflowsStart", "weeklyNetInflowsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近 1 月净流入额",
+        type: "slider",
+        paramKeys: ["monthlyNetInflowsStart", "monthlyNetInflowsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "今年以来净流入额",
+        type: "slider",
+        paramKeys: ["ytdNetInflowsStart", "ytdNetInflowsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近 1 年净流入额",
+        type: "slider",
+        paramKeys: ["yearlyNetInflowsStart", "yearlyNetInflowsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近 3 年净流入额",
+        type: "slider",
+        paramKeys: ["threeYearNetInflowsStart", "threeYearNetInflowsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "近 5 年净流入额",
+        type: "slider",
+        paramKeys: ["fiveYearNetInflowsStart", "fiveYearNetInflowsEnd"],
+        range: [0, 100],
+      },
+    ],
+  },
+  {
+    label: "风险度量",
+    value: "RiskMetrics",
+    type: "slider",
+    children: [
+      {
+        label: "收益标准差",
+        type: "slider",
+        paramKeys: ["std52WeekStart", "std52WeekEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "Beta值",
+        type: "slider",
+        paramKeys: ["beta52WeekStart", "beta52WeekEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "5日波动率区间",
+        type: "slider",
+        paramKeys: ["volatility5DayStart", "volatility5DayEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "20日波动率区间",
+        type: "slider",
+        paramKeys: ["volatility20DayStart", "volatility20DayEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "50日波动率区间",
+        type: "slider",
+        paramKeys: ["volatility50DayStart", "volatility50DayEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "200日波动率区间",
+        type: "slider",
+        paramKeys: ["volatility200DayStart", "volatility200DayEnd"],
+        range: [0, 100],
+      },
+    ],
+  },
+  {
+    label: "持仓",
+    value: "Holdings",
+    type: "slider",
+    children: [
+      {
+        label: "持股数量",
+        type: "slider",
+        paramKeys: ["stockHoldingsStart", "stockHoldingsEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "前十大持仓占比",
+        type: "slider",
+        paramKeys: ["top10ConcentrationStart", "top10ConcentrationEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "前十五大持仓占比",
+        type: "slider",
+        paramKeys: ["top15ConcentrationStart", "top15ConcentrationEnd"],
+        range: [0, 100],
+      },
+      {
+        label: "前五十大持仓占比",
+        type: "slider",
+        paramKeys: ["top50ConcentrationStart", "top50ConcentrationEnd"],
+        range: [0, 100],
+      },
+    ],
+  },
+];
+
+function getFilterTable() {
+  filterData.forEach((item) => {
+    if(item.value === 'assetClass'){
+      item.children.forEach((child) => {
+        child.classification.forEach((classification) => {
+          console.log(classification,child.value , 11111);
+          getTypeByCategoryApi(classification.value, child.value)
+          .then((res) => {
+                classification.children = res
+              });
+        });
+      });
+    }
+  });
+  console.log(filterData, 11111);
 }
 
 // 组件挂载时初始化
 onMounted(() => {
-  initSliderValues()
-})
+  initSliderValues();
+  getFilterTable();
+});
 
 // 重置所有筛选条件
 function resetFilters() {
-  activeNames.value = ''
-  chidActiveName.value = ''
-  selectedChild.value = ''
-  selectedItems.value = []
-  emit('update:selectedItems', [])
-  emit('update:selectedChild', '')
+  activeNames.value = "";
+  chidActiveName.value = "";
+  selectedChild.value = "";
+  selectedItems.value = [];
+  sliderValues.value = {};
+  dateValues.value = {};
+  emit("update:selectedItems", []);
+  emit("update:selectedChild", "");
 }
 
-defineExpose({ resetFilters })
+defineExpose({ resetFilters });
 
 // 处理复选框变化事件
 function handleCheckboxChange(value: string, checked: boolean) {
   if (checked) {
-    selectedItems.value.push(value)
+    selectedItems.value.push(value);
   } else {
-    const index = selectedItems.value.indexOf(value)
+    const index = selectedItems.value.indexOf(value);
     if (index > -1) {
-      selectedItems.value.splice(index, 1)
+      selectedItems.value.splice(index, 1);
     }
   }
-  emit('update:selectedItems', selectedItems.value)
+  console.log(selectedItems.value, 33333);
+  emit("update:selectedItems", selectedItems.value);
 }
 
 // 处理单选框变化事件
 function handleRadioChange(value: string) {
-  selectedChild.value = value
-  selectedItems.value = []
-  emit('update:selectedChild', value)
-  emit('update:selectedItems', [])
+  selectedChild.value = value;
+  selectedItems.value = [];
+  emit("update:selectedChild", value);
+  emit("update:selectedItems", []);
 }
 
-function onChange(value: number | number[], index: number) {
-  sliderValues.value[index] = value as [number, number]
+function handleRangeChange(
+  value: [number, number],
+  filterValue: string,
+  paramKeys: string[]
+) {
+  const key = `${filterValue}_${paramKeys[0]}`;
+  sliderValues.value[key] = value;
+  emit("update:selectedItems", {
+    [paramKeys[0]]: value[0],
+    [paramKeys[1]]: value[1],
+  });
+}
+
+function handleSingleDateChange(
+  val: Date,
+  filterValue: string,
+  paramKeys: string[],
+  pos: 0 | 1
+) {
+  const key = `${filterValue}_${paramKeys[0]}`;
+  if (!dateValues.value[key]) dateValues.value[key] = [null, null];
+  dateValues.value[key][pos] = val;
+  emit("update:selectedItems", {
+    [paramKeys[0]]: dateValues.value[key][0] || "",
+    [paramKeys[1]]: dateValues.value[key][1] || "",
+  });
+}
+
+function handleRangeInputChange(
+  value: string,
+  filterValue: string,
+  paramKeys: string[],
+  position: 0 | 1
+) {
+  const key = `${filterValue}_${paramKeys[0]}`;
+  const numValue = Number(value);
+  if (!isNaN(numValue)) {
+    sliderValues.value[key][position] = numValue;
+    emit("update:selectedItems", {
+      [paramKeys[position]]: numValue,
+    });
+  }
 }
 </script>
 
@@ -123,94 +532,169 @@ function onChange(value: number | number[], index: number) {
   <div class="filters">
     <!-- 筛选器头部 -->
     <div class="filters-header">
-      <h2>Filters</h2>
-      <button class="reset-btn" @click="resetFilters">Reset</button>
+      <h2>过滤器</h2>
+      <button class="reset-btn" @click="resetFilters">重置</button>
     </div>
     <!-- 主折叠面板 -->
     <van-collapse v-model="activeNames" accordion class="main-collapse">
+      <!-- 资产类别 -->
       <van-collapse-item
-        v-for="item in filterData"
-        :key="item.value"
-        :name="item.value"
-        :title="item.label">
-        <!-- 资产类别特殊处理 -->
-        <template v-if="item.value === 'assetClass' && isNormalFilterItem(item)">
+        v-for="filter in filterData"
+        :key="filter.value"
+        :name="filter.value"
+        :title="filter.label"
+      >
+        <template v-if="filter.type !== 'slider'">
           <van-collapse v-model="chidActiveName" accordion>
             <van-collapse-item
-              v-for="child in item.children"
+              v-for="child in filter.children"
               :key="child.value"
               :name="child.value"
               :title="child.label"
               :is-link="false"
-              class="child-collapse-item">
+              class="child-collapse-item"
+            >
               <template #title>
-                <van-radio-group v-model="selectedChild" @change="handleRadioChange">
+                <van-radio-group
+                  v-model="selectedChild"
+                  @change="handleRadioChange"
+                >
                   <van-radio :name="child.value">{{ child.label }}</van-radio>
                 </van-radio-group>
               </template>
-              <div class="children-list">
-                <div v-for="subChild in isNormalFilterItem(child) ? child.children : []" :key="subChild.value" class="child-item">
-                  <van-checkbox
-                    :model-value="selectedItems.includes(subChild.value)"
-                    @update:model-value="(checked) => handleCheckboxChange(subChild.value, checked)"
-                    shape="square"
-                    icon-size="14px"
+              <div class="children-list alt-list">
+                <div
+                  v-for="classification in child.classification"
+                  :key="classification.value"
+                  class="alt-classification"
+                >
+                  <p class="alt-title">{{ classification.label }}</p>
+                  <div
+                    v-for="subChild in classification.children"
+                    :key="subChild.value"
+                    class="alt-item"
                   >
-                    {{ subChild.label }}
-                  </van-checkbox>
-                  <span
-                    class="cont"
-                    :class="{
-                      'cont-error': isLeafFilterItem(subChild) && subChild.cont === 0,
-                      'cont-success': isLeafFilterItem(subChild) && subChild.cont && subChild.cont > 0
-                    }"
-                  >
-                    {{ isLeafFilterItem(subChild) ? subChild.cont : 0 }}
-                  </span>
+                    <van-checkbox
+                      :model-value="selectedItems.includes(subChild.fundType)"
+                      @update:model-value="(checked) => handleCheckboxChange(subChild.fundType, checked)"
+                      shape="square"
+                      icon-size="14px"
+                    >
+                      {{ subChild.fundType }}
+                    </van-checkbox>
+                    <span
+                      class="alt-count"
+                      :class="{
+                        'alt-count-zero': subChild.count === 0
+                      }"
+                    >
+                      {{ subChild.count }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </van-collapse-item>
           </van-collapse>
         </template>
-        <!-- 费用范围处理 -->
-        <template v-else-if="isRangeFilterItem(item)">
+
+        <template v-if="filter.type === 'slider'">
           <div class="range-list">
-            <div v-for="(range, index) in item.children" :key="index" class="range-item">
-              <el-slider
-                :model-value="sliderValues[index] || [range.start, range.end]"
-                @update:model-value="(val) => onChange(val, index)"
-                :min="range.start"
-                :max="range.end"
-                range
-              />
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <el-input v-model="sliderValues[index][0]" />
-                <el-input v-model="sliderValues[index][1]" />
-              </div>
-            </div>
-          </div>
-        </template>
-        <!-- 其他筛选项处理 -->
-        <template v-else-if="isNormalFilterItem(item)">
-          <div class="children-list">
-            <div v-for="subChild in isNormalFilterItem(item) ? item.children : []" :key="subChild.value" class="child-item">
-              <van-checkbox
-                :model-value="selectedItems.includes(subChild.value)"
-                @update:model-value="(checked) => handleCheckboxChange(subChild.value, checked)"
-                shape="square"
-                icon-size="14px"
-              >
-                {{ subChild.label }}
-              </van-checkbox>
-              <span
-                class="cont"
-                :class="{
-                  'cont-error': isLeafFilterItem(subChild) && subChild.cont === 0,
-                  'cont-success': isLeafFilterItem(subChild) && subChild.cont && subChild.cont > 0
-                }"
-              >
-                {{ isLeafFilterItem(subChild) ? subChild.cont : 0 }}
-              </span>
+            <div
+              v-for="(item, index) in filter.children"
+              :key="index"
+              class="range-item"
+            >
+              <!-- 数字范围滑块 -->
+              <template v-if="item.type === 'slider'">
+                <div class="range-label">{{ item.label }}</div>
+                <el-slider
+                  v-model="sliderValues[`${filter.value}_${item.paramKeys[0]}`]"
+                  :min="item.range?.[0] || 0"
+                  :max="item.range?.[1] || 100"
+                  range
+                  @change="
+                    (val) =>
+                      handleRangeChange(val, filter.value, item.paramKeys)
+                  "
+                />
+                <div class="range-inputs">
+                  <el-input
+                    v-model="
+                      sliderValues[`${filter.value}_${item.paramKeys[0]}`][0]
+                    "
+                    size="small"
+                    @change="
+                      (val) =>
+                        handleRangeInputChange(
+                          val,
+                          filter.value,
+                          item.paramKeys,
+                          0
+                        )
+                    "
+                  />
+                  <span class="range-separator">-</span>
+                  <el-input
+                    v-model="
+                      sliderValues[`${filter.value}_${item.paramKeys[0]}`][1]
+                    "
+                    size="small"
+                    @change="
+                      (val) =>
+                        handleRangeInputChange(
+                          val,
+                          filter.value,
+                          item.paramKeys,
+                          1
+                        )
+                    "
+                  />
+                </div>
+              </template>
+
+              <!-- 日期范围选择器（移动端友好版） -->
+              <template v-if="item.type === 'date'">
+                <div class="range-label">{{ item.label }}</div>
+                <div class="date-range-inputs">
+                  <el-date-picker
+                    v-model="
+                      dateValues[`${filter.value}_${item.paramKeys[0]}`][0]
+                    "
+                    type="date"
+                    value-format="YYYY-MM-DD"
+                    placeholder="开始日期"
+                    style="width: 43%;margin-right: 10px;"
+                    @change="
+                      (val) =>
+                        handleSingleDateChange(
+                          val,
+                          filter.value,
+                          item.paramKeys,
+                          0
+                        )
+                    "
+                  />
+                  <span class="range-separator">至</span>
+                  <el-date-picker
+                    v-model="
+                      dateValues[`${filter.value}_${item.paramKeys[0]}`][1]
+                    "
+                    type="date"
+                    value-format="YYYY-MM-DD"
+                    placeholder="结束日期"
+                    style="width: 43%;margin-left: 10px;"
+                    @change="
+                      (val) =>
+                        handleSingleDateChange(
+                          val,
+                          filter.value,
+                          item.paramKeys,
+                          1
+                        )
+                    "
+                  />
+                </div>
+              </template>
             </div>
           </div>
         </template>
@@ -226,7 +710,7 @@ function onChange(value: number | number[], index: number) {
   background: #fff;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   min-width: 260px;
   padding: 0;
   overflow: hidden;
@@ -275,36 +759,50 @@ function onChange(value: number | number[], index: number) {
   // 子项列表样式
   .children-list {
     padding: 8px 16px;
-    .child-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
-      // 数量标签样式
-      .cont {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 20px;
-        height: 20px;
-        padding: 0 6px;
-        border-radius: 10px;
-        font-size: 12px;
-        font-weight: 500;
-        margin-left: 8px;
-        // 错误状态样式
-        &.cont-error {
-          background-color: #ee0a24;
-          color: #fff;
+
+  }
+  .alt-list {
+      padding: 8px 16px;
+      .alt-classification {
+        margin-bottom: 8px;
+        .alt-title {
+          font-weight: 600;
+          font-size: 15px;
+          margin-bottom: 4px;
+          color: #333;
         }
-        // 成功状态样式
-        &.cont-success {
-          background-color: #07c160;
-          color: #fff;
+        .alt-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 6px 0;
+          .van-checkbox {
+            flex: 1;
+            font-size: 14px;
+            color: #222;
+          }
+          .alt-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            height: 18px;
+            padding: 0 6px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            background-color: #80b600;
+            color: #fff;
+            margin-left: 8px;
+            transition: background 0.2s;
+          }
+          .alt-count-zero {
+            background-color: #d9534f;
+            color: #fff;
+          }
         }
       }
     }
-  }
 
   // 折叠面板样式
   :deep(.van-collapse) {
@@ -343,11 +841,42 @@ function onChange(value: number | number[], index: number) {
   }
 
   .range-list {
-    padding: 8px 16px;
+    padding: 16px;
+
     .range-item {
-      padding: 8px 0;
-      color: #666;
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
+
+    .range-label {
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .range-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+
+      .el-input {
+        width: 100px;
+      }
+
+      .range-separator {
+        color: #999;
+      }
+    }
+  }
+  :deep(.el-slider__bar) {
+    background-color: var(--theme-purple);
+  }
+  :deep(.el-slider__button) {
+    border-color: var(--theme-purple);
   }
 }
 

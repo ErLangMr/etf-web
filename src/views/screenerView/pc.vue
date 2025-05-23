@@ -1,109 +1,200 @@
 <script setup lang="ts">
 // PC 端特有的逻辑和状态
-import { ref, onMounted, nextTick, computed } from 'vue'
-import ScreenerFilter from '@/components/ScreenerFilter.vue'
-import type { FilterItem } from '@/components/ScreenerFilter.vue'
-import ScreenerTable from '@/components/ScreenerTable.vue'
-import { useDevice } from '@/utils/device'
-import { Operation } from '@element-plus/icons-vue'
-import { getFilterTable } from '@/api/filterTable'
-const { isMobile } = useDevice()
-getFilterTable().then(res => {
-  console.log(res,11111)
-})
-// 一级资产类型
-const assetClasses: FilterItem[] = [
-  { label: 'Asset Class', value: 'assetClass', children: [
-    { label: 'Alternatives', value: 'alternatives', children: [
-      { label: 'Hedge Fund', value: 'hedge-fund', cont: 0 },
-      { label: 'Commodity', value: 'commodity', cont: 456 },
-      { label: 'Equity', value: 'equity', cont: 789 },
-    ] },
-    { label: 'Bonds', value: 'bonds' },
-    { label: 'Commodity', value: 'commodity' },
-  ] },
-  { label: 'Attributes', value: 'attributes', children: [
-    { label: 'Any', value: 'any', cont: 1243 },
-    { label: 'Active', value: 'active', cont: 344 },
-    { label: 'Passive', value: 'passive', cont: 45 }
-  ] },
-  { label: 'Issuer', value: 'issuer' },
-  { label: 'Expenses & Dividend', value: 'expenses', type: 'slider', children: [
-    { start: 0, end: 19 },
-    { start: 0, end: 19 },
-    { start: 20, end: 716 }
-  ] },
-]
+import { ref, onMounted, nextTick, computed, watch } from "vue";
+import ScreenerFilter from "@/components/ScreenerFilter.vue";
+import type { FilterItem } from "@/components/ScreenerFilter.vue";
+import ScreenerTable from "@/components/ScreenerTable.vue";
+import { useDevice } from "@/utils/device";
+import { Operation } from "@element-plus/icons-vue";
+import { getFilterTableApi } from "@/api/filterTable";
+const { isMobile } = useDevice();
+getFilterTableApi().then((res) => {
+  console.log(res, 11111);
+});
 
-const mobileFilterRef = ref()
-const selectedChild = ref('')
-const selectedItems = ref<string[]>([])
+
+const mobileFilterRef = ref();
+const selectedChild = ref("");
+const selectedItems = ref<string[]>([]);
+
+watch(selectedChild, (newVal) => {
+  console.log(newVal, 11111);
+});
+
+watch(
+  selectedItems,
+  (newVal) => {
+    console.log(newVal, 22222);
+  },
+  { deep: true }
+);
 
 const etfList = ref([
-  { symbol: 'FTLS', name: 'First Trust Long/Short Equity ETF', asset: 'Alternatives', total: '$1,951', ytd: '-2.91%', volume: '162,536', price: '$63.75' },
-  { symbol: 'DBMF', name: 'iMGP DBi Managed Futures Strategy ETF', asset: 'Alternatives', total: '$1,191', ytd: '-2.58%', volume: '778,684', price: '$25.31' },
-  { symbol: 'CTA', name: 'Simplify Managed Futures Strategy ETF', asset: 'Alternatives', total: '$1,034', ytd: '-0.25%', volume: '638,084', price: '$27.71' },
-  { symbol: 'QAI', name: 'NYLI Hedge Multi-Strategy Tracker ETF', asset: 'Alternatives', total: '$692', ytd: '0.25%', volume: '69,002', price: '$31.49' },
-  { symbol: 'RLY', name: 'SPDR SSgA Multi-Asset Real Return ETF', asset: 'Alternatives', total: '$477', ytd: '4.52%', volume: '84,514', price: '$28.24' },
-  { symbol: 'BTAL', name: 'AGF U.S. Market Neutral Anti-Beta Fund', asset: 'Alternatives', total: '$389', ytd: '6.11%', volume: '945,519', price: '$19.61' },
-  { symbol: 'FLSP', name: 'Franklin Systematic Style Premia ETF', asset: 'Alternatives', total: '$337', ytd: '0.84%', volume: '55,541', price: '$24.11' },
-  { symbol: 'MNA', name: 'NYLI Merger Arbitrage ETF', asset: 'Alternatives', total: '$234', ytd: '5.43%', volume: '39,944', price: '$34.75' },
-  { symbol: 'KMLM', name: 'KFA Mount Lucas Managed Futures Index Strategy ETF', asset: 'Alternatives', total: '$194', ytd: '-6.37%', volume: '164,363', price: '$26.31' },
-  { symbol: 'CLSE', name: 'Convergence Long/Short Equity ETF', asset: 'Alternatives', total: '$172', ytd: '-3.71%', volume: '116,822', price: '$22.06' },
-  { symbol: 'WTMF', name: 'WisdomTree Managed Futures Strategy Fund', asset: 'Alternatives', total: '$158', ytd: '-1.23%', volume: '27,181', price: '$34.50' },
-  { symbol: 'FMF', name: 'First Trust Managed Futures Strategy Fund', asset: 'Alternatives', total: '$151', ytd: '-4.02%', volume: '25,977', price: '$45.43' },
-])
+  {
+    symbol: "FTLS",
+    name: "First Trust Long/Short Equity ETF",
+    asset: "Alternatives",
+    total: "$1,951",
+    ytd: "-2.91%",
+    volume: "162,536",
+    price: "$63.75",
+  },
+  {
+    symbol: "DBMF",
+    name: "iMGP DBi Managed Futures Strategy ETF",
+    asset: "Alternatives",
+    total: "$1,191",
+    ytd: "-2.58%",
+    volume: "778,684",
+    price: "$25.31",
+  },
+  {
+    symbol: "CTA",
+    name: "Simplify Managed Futures Strategy ETF",
+    asset: "Alternatives",
+    total: "$1,034",
+    ytd: "-0.25%",
+    volume: "638,084",
+    price: "$27.71",
+  },
+  {
+    symbol: "QAI",
+    name: "NYLI Hedge Multi-Strategy Tracker ETF",
+    asset: "Alternatives",
+    total: "$692",
+    ytd: "0.25%",
+    volume: "69,002",
+    price: "$31.49",
+  },
+  {
+    symbol: "RLY",
+    name: "SPDR SSgA Multi-Asset Real Return ETF",
+    asset: "Alternatives",
+    total: "$477",
+    ytd: "4.52%",
+    volume: "84,514",
+    price: "$28.24",
+  },
+  {
+    symbol: "BTAL",
+    name: "AGF U.S. Market Neutral Anti-Beta Fund",
+    asset: "Alternatives",
+    total: "$389",
+    ytd: "6.11%",
+    volume: "945,519",
+    price: "$19.61",
+  },
+  {
+    symbol: "FLSP",
+    name: "Franklin Systematic Style Premia ETF",
+    asset: "Alternatives",
+    total: "$337",
+    ytd: "0.84%",
+    volume: "55,541",
+    price: "$24.11",
+  },
+  {
+    symbol: "MNA",
+    name: "NYLI Merger Arbitrage ETF",
+    asset: "Alternatives",
+    total: "$234",
+    ytd: "5.43%",
+    volume: "39,944",
+    price: "$34.75",
+  },
+  {
+    symbol: "KMLM",
+    name: "KFA Mount Lucas Managed Futures Index Strategy ETF",
+    asset: "Alternatives",
+    total: "$194",
+    ytd: "-6.37%",
+    volume: "164,363",
+    price: "$26.31",
+  },
+  {
+    symbol: "CLSE",
+    name: "Convergence Long/Short Equity ETF",
+    asset: "Alternatives",
+    total: "$172",
+    ytd: "-3.71%",
+    volume: "116,822",
+    price: "$22.06",
+  },
+  {
+    symbol: "WTMF",
+    name: "WisdomTree Managed Futures Strategy Fund",
+    asset: "Alternatives",
+    total: "$158",
+    ytd: "-1.23%",
+    volume: "27,181",
+    price: "$34.50",
+  },
+  {
+    symbol: "FMF",
+    name: "First Trust Managed Futures Strategy Fund",
+    asset: "Alternatives",
+    total: "$151",
+    ytd: "-4.02%",
+    volume: "25,977",
+    price: "$45.43",
+  },
+]);
 
 // 表头配置
 const tableColumns = ref([
-  { prop: 'symbol', label: 'Symbol',type:'link',url:'/details' },
-  { prop: 'name', label: 'ETF Name',type:'link',url:'/details' },
-  { prop: 'asset', label: 'Asset Class' },
-  { prop: 'total', label: 'Total Assets ($MM)' },
-  { prop: 'ytd', label: 'YTD Price Change' },
-  { prop: 'volume', label: 'Avg. Daily Share Volume (3mo)' },
-  { prop: 'price', label: 'Previous Closing Price' },
-])
+  { prop: "symbol", label: "Symbol", type: "link", url: "/details" },
+  { prop: "name", label: "ETF Name", type: "link", url: "/details" },
+  { prop: "asset", label: "Asset Class" },
+  { prop: "total", label: "Total Assets ($MM)" },
+  { prop: "ytd", label: "YTD Price Change" },
+  { prop: "volume", label: "Avg. Daily Share Volume (3mo)" },
+  { prop: "price", label: "Previous Closing Price" },
+]);
 
 const filterTabs = [
-  { label: 'Overview', value: 'overview' },
-  { label: 'Returns', value: 'returns' },
-  { label: 'Fund Flows', value: 'fund-flows' },
-  { label: 'Expenses', value: 'expenses' },
-  { label: 'ESG', value: 'esg', icon: true },
-  { label: 'Dividends', value: 'dividends' },
-  { label: 'Risk', value: 'risk' },
-  { label: 'Holdings', value: 'holdings' },
-  { label: 'Taxes', value: 'taxes' },
-  { label: 'Technicals', value: 'technicals' },
-  { label: 'Analysis', value: 'analysis' },
-  { label: 'Realtime Ratings', value: 'realtime-ratings' },
-]
-const activeTab = ref('overview')
+  { label: "Overview", value: "overview" },
+  { label: "Returns", value: "returns" },
+  { label: "Fund Flows", value: "fund-flows" },
+  { label: "Expenses", value: "expenses" },
+  { label: "ESG", value: "esg", icon: true },
+  { label: "Dividends", value: "dividends" },
+  { label: "Risk", value: "risk" },
+  { label: "Holdings", value: "holdings" },
+  { label: "Taxes", value: "taxes" },
+  { label: "Technicals", value: "technicals" },
+  { label: "Analysis", value: "analysis" },
+  { label: "Realtime Ratings", value: "realtime-ratings" },
+];
+const activeTab = ref("overview");
 
-const showMobileFilter = ref(false)
+const showMobileFilter = ref(false);
 function openMobileFilter() {
-  showMobileFilter.value = true
+  showMobileFilter.value = true;
 }
 function closeMobileFilter() {
-  showMobileFilter.value = false
+  showMobileFilter.value = false;
 }
 
 onMounted(() => {
   nextTick(() => {
     // 横向筛选菜单相关逻辑精简，无需折叠和更多按钮
-  })
-})
+  });
+});
 </script>
 
 <template>
   <div class="screener-pc">
     <!-- 移动端 Filter 按钮 -->
-    <button class="mobile-filter-btn" @click="openMobileFilter" v-show="isMobile()"><Operation />筛选</button>
+    <button
+      class="mobile-filter-btn"
+      @click="openMobileFilter"
+      v-show="isMobile()"
+    >
+      <Operation />筛选
+    </button>
     <!-- PC端筛选器 -->
     <div class="filter-left pc-filter" v-show="!isMobile()">
       <ScreenerFilter
-        :filter-data="assetClasses"
         v-model:selected-child="selectedChild"
         v-model:selected-items="selectedItems"
       />
@@ -113,13 +204,14 @@ onMounted(() => {
       <div class="mobile-filter-panel">
         <div class="mobile-filter-header">
           <span>筛选器</span>
-          <button class="reset-btn" @click="mobileFilterRef?.resetFilters()">重置</button>
+          <button class="reset-btn" @click="mobileFilterRef?.resetFilters()">
+            重置
+          </button>
           <span class="close-btn" @click="closeMobileFilter">×</span>
         </div>
         <div class="mobile-filter-content">
           <ScreenerFilter
             ref="mobileFilterRef"
-            :filter-data="assetClasses"
             v-model:selected-child="selectedChild"
             v-model:selected-items="selectedItems"
           />
@@ -167,9 +259,9 @@ onMounted(() => {
   border-radius: 4px;
   padding: 5px 20px;
   font-size: 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   color: #fff;
-  svg{
+  svg {
     height: 18px;
     vertical-align: middle;
     margin-right: 4px;
@@ -179,8 +271,11 @@ onMounted(() => {
 .mobile-filter-mask {
   position: fixed;
   z-index: 2000;
-  left: 0; top: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4);
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: flex-end;
 }
