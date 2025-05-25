@@ -1,26 +1,18 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { QuestionFilled } from '@element-plus/icons-vue'
-import { ref, type PropType } from 'vue'
+import { computed, ref, type PropType } from 'vue'
 import { useDevice } from '@/utils/device'
-
+import { formatValue } from '@/utils/formatValue'
 const { isMobile } = useDevice()
 
 defineProps({
-  tableColumns: {
-    type: Array as PropType<any[]>,
-    required: true
-  },
   tableData: {
     type: Array as PropType<any[]>,
     required: true
   },
-  filterTabs: {
-    type: Array as PropType<any[]>,
-    required: false
-  },
-  activeTab: {
-    type: String,
+  hasTableFilter: {
+    type: Boolean,
     required: false
   },
   description: {
@@ -29,24 +21,142 @@ defineProps({
   }
 })
 const router = useRouter()
-const emit = defineEmits(['update:activeTab'])
+const filterTabs = ref([
+  { label: "概览", value: "overview" },
+  { label: "收益", value: "returns" },
+  { label: "资金流动", value: "fundFlows" },
+  { label: "费用", value: "expenses" },
+  { label: "ESG", value: "esg", icon: true },
+  { label: "分红", value: "dividends" },
+  { label: "风险指标", value: "risk" },
+  { label: "持仓特征", value: "holdings" },
+  // { label: "税务", value: "taxes" },
+  { label: "技术指标", value: "technicals" },
+  // { label: "分析", value: "analysis" },
+  // { label: "实时评级", value: "realtimeRatings" },
+]);
+
+const tableColumnList = ref(
+  {
+    overview: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "category", label: "资产类型" },
+      { prop: "totalMarketValue", label: "ETF规模" },
+      { prop: "ytdPriceChange", label: "今年以来价格变化" },
+      { prop: "avgDailyVolume", label: "日均交易量" },
+      { prop: "preClose", label: "前收盘价" }
+    ],
+    returns: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "weeklyReturns", label: "近1周回报" },
+      { prop: "totalMarketValue", label: "近1月回报" },
+      { prop: "ytdReturns", label: "今年以来回报" },
+      { prop: "yearlyReturns", label: "近1年回报" },
+      { prop: "threeYearReturns", label: "近3年回报" },
+      { prop: "fiveYearReturns", label: "近5年回报" },
+      // { prop: "preClose", label: "回报排名" },
+    ],
+    fundFlows: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "weeklyNetInflows", label: "近1周净流入额" },
+      { prop: "monthlyNetInflows", label: "近1月净流入额" },
+      { prop: "ytdNetInflows", label: "今年以来净流入额" },
+      { prop: "yearlyNetInflows", label: "近1年净流入额" },
+      { prop: "threeYearNetInflows", label: "近3年净流入额" },
+      { prop: "fiveYearNetInflows", label: "近5年净流入额" },
+    ],
+    expenses: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "category", label: "资产类型" },
+      { prop: "totalMarketValue", label: "ETF规模" },
+      { prop: "managementFee", label: "管理费率" },
+      { prop: "custodyFee", label: "托管费率" },
+      { prop: "serviceFee", label: "销售服务费率" },
+      { prop: "indexLicenseFee", label: "指数使用费率" },
+    ],
+    esg: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "esgScore", label: "ESG综合得分" },
+      { prop: "esgControversyScore", label: "ESG争议事件得分" },
+      { prop: "environmentScore", label: "ESG环境维度得分" },
+      { prop: "socialScore", label: "ESG社会维度得分" },
+      { prop: "governanceScore", label: "ESG治理维度得分" },
+    ],
+    dividends: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "divPerUnit", label: "单位年度分红" },
+      { prop: "accDivPerUnit", label: "单位累计分红" },
+      { prop: "divTimes", label: "年度分红次数" },
+      { prop: "divYield", label: "单位分红率" }
+    ],
+    risk: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "std52Week", label: "收益标准差" },
+      { prop: "市盈率P/E", label: "市盈率P/E" },
+      { prop: "beta52Week", label: "Beta" },
+      { prop: "volatility5Day", label: "过去5日波动率" },
+      { prop: "volatility20Day", label: "过去20日波动率" },
+      { prop: "volatility50Day", label: "过去50日波动率" },
+      { prop: "volatility200Day", label: "过去200日波动率" },
+    ],
+    holdings: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "fundMgrs", label: "发行人" },
+      { prop: "stockHoldings", label: "持有股票个数" },
+      { prop: "top10Concentration", label: "前十大持仓集中度" },
+      { prop: "top15Concentration", label: "前十五大持仓集中度" },
+      { prop: "top50Concentration", label: "前五十大持仓集中度" },
+      // { prop: "category", label: "全部持仓明细" },
+      // { prop: "category", label: "持仓集中度排名" },
+    ],
+    technicals: [
+      { prop: "code", label: "ETF代码" },
+      { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
+      { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
+      { prop: "lowerBoll", label: "下布林带" },
+      { prop: "upBoll", label: "上布林带" },
+    ]
+  }
+)
+const tableColumns = computed(() => {
+  return tableColumnList.value[activeTab.value as keyof typeof tableColumnList.value] || []
+})
+const activeTab = ref("overview");
 
 const handleTabClick = (tab: string) => {
-  emit('update:activeTab', tab)
+  activeTab.value = tab
 }
 
 // 处理跳转
-const handleJump = (url: string) => {
-  router.push(`${url}`)
+const handleJump = (url: string, code: string) => {
+  router.push(`${url}?code=${code}`)
 }
 const expanded = ref<string | null>(null);
 const toggleExpand = (symbol: string) => {
   expanded.value = expanded.value === symbol ? null : symbol;
 };
+
+
 </script>
 <template>
   <div class="screener-table-area">
-    <div v-if="filterTabs" class="filter-tabs-wrapper">
+    <div v-if="hasTableFilter" class="filter-tabs-wrapper">
       <div class="filter-tabs">
         <div
           v-for="tab in filterTabs"
@@ -72,12 +182,16 @@ const toggleExpand = (symbol: string) => {
           :prop="column.prop"
           :label="column.label"
         >
-          <template #default="scope" v-if="column.type === 'link'">
+          <template #default="scope">
             <span
               class="link-cell"
-              @click="handleJump(column.url)"
+              v-if="column.type === 'link'"
+              @click="handleJump(column.url, scope.row.code || '')"
             >
               {{ scope.row[column.prop] }}
+            </span>
+            <span v-else>
+              {{ formatValue(scope.row[column.prop]) }}
             </span>
           </template>
         </el-table-column>
@@ -85,17 +199,17 @@ const toggleExpand = (symbol: string) => {
     </div>
     <div class="mobile-etf-list" v-if="isMobile()">
       <div v-for="etf in tableData" :key="etf.symbol" class="etf-row-card">
-        <template v-if="etf.symbol && etf.name">
-          <div class="etf-row-summary" @click="toggleExpand(etf.symbol)">
-            <span class="symbol">{{ etf.symbol }}</span>
-            <span class="symbol-divider">-</span>
-            <span class="name">{{ etf.name }}</span>
-            <span class="arrow" :class="{ expanded: expanded === etf.symbol }">
+        <template v-if="etf.shortName">
+          <div class="etf-row-summary" @click="toggleExpand(etf.code)">
+            <span class="symbol">{{ etf.shortName }}</span>
+            <!-- <span class="symbol-divider">-</span>
+            <span class="name">{{ etf.name }}</span> -->
+            <span class="arrow" :class="{ expanded: expanded === etf.code }">
               <van-icon name="arrow" />
             </span>
           </div>
           <transition name="fade">
-            <div v-if="expanded === etf.symbol" class="etf-row-detail">
+            <div v-if="expanded === etf.code" class="etf-row-detail">
               <div
                 v-for="header in tableColumns"
                 :key="header.prop"
@@ -105,11 +219,11 @@ const toggleExpand = (symbol: string) => {
                 <span
                   class="value linkStyle"
                   v-if="header.type === 'link'"
-                  @click="router.push(header.url)"
+                  @click="handleJump(header.url, etf.code)"
                   >{{ etf[header.prop as keyof typeof etf] }}</span
                 >
                 <span class="value" v-else>{{
-                  etf[header.prop as keyof typeof etf]
+                  formatValue(etf[header.prop as keyof typeof etf])
                 }}</span>
               </div>
             </div>
@@ -126,16 +240,20 @@ const toggleExpand = (symbol: string) => {
               <span
                 class="value linkStyle"
                 v-if="header.type === 'link'"
-                @click="router.push(header.url)"
+                @click="handleJump(header.url, etf.code)"
                 >{{ etf[header.prop as keyof typeof etf] }}</span
               >
               <span class="value" v-else>{{
-                etf[header.prop as keyof typeof etf]
+                formatValue(etf[header.prop as keyof typeof etf])
               }}</span>
             </div>
           </div>
         </template>
       </div>
+    </div>
+    <div class="table-pagination" v-if="$slots['table-pagination']">
+      <slot name="table-pagination">
+      </slot>
     </div>
   </div>
 </template>
@@ -152,6 +270,12 @@ const toggleExpand = (symbol: string) => {
   flex-direction: column;
   overflow: hidden;
   max-width: 100%;
+  .table-pagination{
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+  }
 }
 .description {
   font-size: 1.08rem;
@@ -166,48 +290,25 @@ const toggleExpand = (symbol: string) => {
 }
 .filter-tabs {
   display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #fafafd;
 }
 .filter-tab {
-  flex: 0 0 calc(100% / 6);
-  max-width: calc(100% / 6);
-  min-width: 0;
-  box-sizing: border-box;
+  flex: 1 1 0;
   text-align: center;
-  padding: 10px 0;
-  font-size: 1rem;
-  color: #333;
-  background: #fafafd;
-  border-right: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
+  max-width: none;
+  min-width: 0;
+  padding: 8px 0;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  user-select: none;
   white-space: nowrap;
-  &:nth-child(6n) {
-    border-right: none;
-  }
-  &:last-child {
-    border-right: none;
-  }
-  &.active {
-    background: $theme-purple;
-    color: #fff;
-    font-weight: 600;
-  }
+  text-overflow: ellipsis;
+  overflow: hidden;
+  // border-bottom: 2px solid transparent;
+  // transition: border-color 0.2s, color 0.2s;
 }
-@media (max-width: 768px) {
-  .filter-tab {
-    flex: 0 0 calc(100% / 3);
-    max-width: calc(100% / 3);
-    padding: 8px 0;
-    font-size: 0.95rem;
-  }
+.filter-tab.active {
+  color: #fff;
+  background: var(--theme-purple);
+  border-bottom: 2px solid var(--theme-purple);
 }
 .table-scroll {
   min-width: 0;
@@ -219,6 +320,7 @@ const toggleExpand = (symbol: string) => {
 .link-cell {
   color: $theme-purple;
   text-decoration: none;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
@@ -312,6 +414,38 @@ const toggleExpand = (symbol: string) => {
       border-radius: 0;
       // margin-bottom: 8px;
     }
+  }
+  .filter-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .filter-tab {
+    flex: none;
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #e5e5e5;
+    border-right: none;
+    border-bottom: none;
+    background: #fff;
+    color: var(--theme-purple);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .filter-tab:nth-child(3n) {
+    border-right: 1px solid #e5e5e5;
+  }
+  .filter-tab:nth-last-child(-n+3) {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .filter-tab.active {
+    background: var(--theme-purple);
+    color: #fff;
+    font-weight: 700;
   }
 }
 </style>

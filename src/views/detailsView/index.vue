@@ -115,11 +115,11 @@ const tabList = ref([
     value: 'HoldingAnalysisChart',
     component: markRaw(HoldingAnalysisChart),
   },
-  {
-    label: "价格和数量图表",
-    value: 'PriceAndVolumeChart',
-    component: markRaw(PriceAndVolumeChart),
-  },
+  // {
+  //   label: "价格和数量图表",
+  //   value: 'PriceAndVolumeChart',
+  //   component: markRaw(PriceAndVolumeChart),
+  // },
   {
     label: "基金流动图表",
     value: 'FundFlowChart',

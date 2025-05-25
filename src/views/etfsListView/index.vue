@@ -11,12 +11,8 @@
       <div class="list-box">
         <ScreenerTable
           class="table-area"
-          :table-columns="tableColumns"
           :table-data="etfList"
-          :filter-tabs="filterTabs"
-          :active-tab="activeTab"
-          @update:activeTab="activeTab = $event"
-          :description="description"
+          :hasTableFilter="true"
         />
       </div>
     </div>
@@ -42,33 +38,6 @@ const etfList = ref([
   { symbol: 'WTMF', name: 'WisdomTree Managed Futures Strategy Fund', asset: 'Alternatives', total: '$158', ytd: '-1.23%', volume: '27,181', price: '$34.50' },
   { symbol: 'FMF', name: 'First Trust Managed Futures Strategy Fund', asset: 'Alternatives', total: '$151', ytd: '-4.02%', volume: '25,977', price: '$45.43' },
 ])
-
-// 表头配置
-const tableColumns = ref([
-  { prop: 'symbol', label: 'Symbol',type:'link',url:'/details' },
-  { prop: 'name', label: 'ETF Name',type:'link',url:'/details' },
-  { prop: 'asset', label: 'Asset Class' },
-  { prop: 'total', label: 'Total Assets ($MM)' },
-  { prop: 'ytd', label: 'YTD Price Change' },
-  { prop: 'volume', label: 'Avg. Daily Share Volume (3mo)' },
-  { prop: 'price', label: 'Previous Closing Price' },
-])
-
-const filterTabs = [
-  { label: 'Overview', value: 'overview' },
-  { label: 'Returns', value: 'returns' },
-  { label: 'Fund Flows', value: 'fund-flows' },
-  { label: 'Expenses', value: 'expenses' },
-  { label: 'ESG', value: 'esg', icon: true },
-  { label: 'Dividends', value: 'dividends' },
-  { label: 'Risk', value: 'risk' },
-  { label: 'Holdings', value: 'holdings' },
-  { label: 'Taxes', value: 'taxes' },
-  { label: 'Technicals', value: 'technicals' },
-  { label: 'Analysis', value: 'analysis' },
-  { label: 'Realtime Ratings', value: 'realtime-ratings' },
-]
-const activeTab = ref('overview')
 
 </script>
 

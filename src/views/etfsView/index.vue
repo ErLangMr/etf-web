@@ -1,102 +1,324 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-
+import { ref, reactive, watch } from "vue";
+import { useRouter } from "vue-router";
+import { getETFAtoZApi, getETFAumApi, getETFExpenseApi, getETFFundFlowApi, getETFReturnApi, getETFIssuerRevenueApi, getETFDividendApi } from '@/api/ETFType'
+import { formatValue } from '@/utils/formatValue'
 const router = useRouter();
 
-const tableList = [
+const tableList = ref([
   {
-    title: 'Asset Class',
-    data: [
-      { theme: 'Equity', rank: 1, flow: '$171,618', issuer: 'Vanguard Group Inc' },
-      { theme: 'Bond', rank: 2, flow: '$74,847', issuer: 'BlackRock, Inc.' },
-      { theme: 'Commodity', rank: 3, flow: '$16,947', issuer: 'Invesco Fund' },
-      { theme: 'Bond', rank: 2, flow: '$74,847', issuer: 'BlackRock, Inc.' },
-      { theme: 'Commodity', rank: 3, flow: '$16,947', issuer: 'Invesco Fund' },
+    title: "资产类别",
+    value: "category",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "资产类型", minWidth: "120" },
     ],
-    columns: [
-      { prop: 'theme', label: 'ETF THEME', minWidth: '120' },
-      { prop: 'rank', label: 'FUND FLOW RANK', minWidth: '120' },
-      { prop: 'flow', label: '3-MO. FUND FLOW ($MM)', minWidth: '180' },
-      { prop: 'issuer', label: 'TOP ISSUER BY FUND FLOW ($MM)', minWidth: '220', isIssuer: true },
+    currentColumns: [] as { prop: string; label: string; minWidth: string; }[]
+  },
+  {
+    title: "行业",
+    value: "sector",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "行业名称", minWidth: "120" },
     ],
   },
   {
-    title: 'Sector',
-    data: [
-      { theme: 'Technology', rank: 1, flow: '$3,879', issuer: 'Rafferty Asset Management' },
-      { theme: 'Utilities', rank: 2, flow: '$1,183', issuer: 'BlackRock Financial Management' },
-      { theme: 'Consumer Discretionary', rank: 3, flow: '$78', issuer: 'Rafferty Asset Management' },
-      { theme: 'Utilities', rank: 2, flow: '$1,183', issuer: 'BlackRock Financial Management' },
-      { theme: 'Consumer Discretionary', rank: 3, flow: '$78', issuer: 'Rafferty Asset Management' },
-    ],
-    columns: [
-      { prop: 'theme', label: 'ETF THEME', minWidth: '120' },
-      { prop: 'rank', label: 'FUND FLOW RANK', minWidth: '120' },
-      { prop: 'flow', label: '3-MO. FUND FLOW ($MM)', minWidth: '180' },
-      { prop: 'issuer', label: 'TOP ISSUER BY FUND FLOW ($MM)', minWidth: '220', isIssuer: true },
+    title: "地区",
+    value: "region",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "地区名称", minWidth: "120" },
     ],
   },
-];
+  {
+    title: "国家",
+    value: "investmentRegion",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "国家名称", minWidth: "120" },
+    ],
+  },
+  {
+    title: "债券类型",
+    value: "category=BOND:bondType",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "债券类型", minWidth: "120" },
+    ],
+  },
+  {
+    title: "债券期限",
+    value: "category=BOND:bondDuration",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "债券期限类型", minWidth: "120" },
+    ],
+  },
+  {
+    title: "商品",
+    value: "category=GOODS:commodityType",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "商品类型", minWidth: "120" },
+    ],
+  },
+  {
+    title: "商品敞口",
+    value: "category=GOODS:commodityExposure",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "商品敞口", minWidth: "120" },
+    ],
+  },
+  {
+    title: "自然资源",
+    value: "naturalResources",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "自然资源", minWidth: "120" },
+    ],
+  },
+  // {
+  //   title: "货币",
+  //   value: "currency",
+  //   data: [],
+  //   originalColumns: [
+  //     { prop: "category", label: "货币", minWidth: "120" },
+  //   ],
+  // },
+  {
+    title: "投资风格",
+    value: "category=EQUITY:styleAttribute",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "投资风格", minWidth: "120" },
+    ],
+  },
+  {
+    title: "市值属性",
+    value: "category=EQUITY:compMarketCap",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "投资风格", minWidth: "120" },
+    ],
+  },
+  {
+    title: "风格属性",
+    value: "category=EQUITY:styleAttribute",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "风格属性", minWidth: "120" },
+    ],
+  },
+  {
+    title: "市值-风格属性",
+    value: "category=EQUITY:investStrategy",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "市值-风格属性", minWidth: "120" },
+    ],
+  },
+  {
+    title: "发行人",
+    value: "fundMgrs",
+    data: [],
+    originalColumns: [
+      { prop: "category", label: "发行人", minWidth: "120" },
+    ],
+  },
+]);
 
 const tabs = [
-  { label: 'A to Z', value: 'A to Z' },
-  { label: 'Fund Flow', value: 'Fund Flow' },
-  { label: 'Return', value: 'Return' },
-  { label: 'AUM', value: 'AUM' },
-  { label: 'Expense', value: 'Expense' },
-  { label: 'Dividend', value: 'Dividend' },
-  { label: 'Issuer Revenue', value: 'Issuer Revenue' },
+  { label: "A to Z", value: "A to Z",columns: [
+      { prop: "totalCount", label: "ETF 数量", minWidth: "120" },
+      { prop: "topFundMgr", label: "数量最多发行人", minWidth: "180" },
+    ], },
+  { label: "资金流动", value: "Fund Flow",columns: [
+      { prop: "fundFlowRank", label: "资金流动排名", minWidth: "120" },
+      { prop: "dataValue", label: "过去三个月的资金净流入额", minWidth: "120" },
+      { prop: "topFundMgr", label: "发行人", minWidth: "180" },
+    ], },
+  { label: "收益", value: "Return",columns: [
+      { prop: "fundFlowRank", label: "收益排名", minWidth: "120" },
+      { prop: "dataValue", label: "过去三个月的平均收益", minWidth: "120" },
+      { prop: "topFundMgr", label: "发行人", minWidth: "180" },
+    ], },
+  { label: "资产规模", value: "AUM",columns: [
+      { prop: "fundFlowRank", label: "资产规模排名", minWidth: "120" },
+      { prop: "dataValue", label: "资产规模", minWidth: "120" },
+      { prop: "topFundMgr", label: "发行人", minWidth: "180" },
+    ], },
+  { label: "费用", value: "Expense",columns: [
+      { prop: "fundFlowRank", label: "费用排名", minWidth: "120" },
+      { prop: "dataValue", label: "平均管理费率", minWidth: "120" },
+      { prop: "topFundMgr", label: "发行人", minWidth: "180" },
+    ], },
+  { label: "分红", value: "Dividend",columns: [
+      { prop: "fundFlowRank", label: "分红排名", minWidth: "120" },
+      { prop: "dataValue", label: "平均分红率", minWidth: "120" },
+      { prop: "topFundMgr", label: "发行人", minWidth: "180" },
+    ], },
+  { label: "发行人收入", value: "Issuer Revenue",columns: [
+      { prop: "topFundMgr", label: "收入最高的发行人", minWidth: "120" }
+    ], },
 ];
-const activeTab = ref('Fund Flow');
+const activeTab = ref("A to Z");
+updateColumns()
+
+ function updateColumns() {
+  const selectedTab = tabs.find(tab => tab.value === activeTab.value)
+  if (selectedTab) {
+    tableList.value.forEach(table => {
+      // 合并原始列 + 当前 tab 的列
+      table.currentColumns = [
+        ...table.originalColumns, // 原始定义的列
+        ...selectedTab.columns   // 当前 tab 的列
+      ]
+      if(table.value === "fundMgrs") {
+        table.currentColumns.pop()
+        if(selectedTab.value === "Issuer Revenue") {
+          table.currentColumns.push({ prop: "fundFlowRank", label: "发行人收入排名", minWidth: "120" })
+          table.currentColumns.push({ prop: "dataValue", label: "发行人收入", minWidth: "120" })
+        }
+
+      }
+    })
+    const setTableData = (data: any) => {
+      tableList.value.map(table => {
+        const arr = data.filter((item: any) => item.typeName === table.value)
+        table.data = arr[0]?.data || []
+      })
+    }
+    if(selectedTab.value === "A to Z") {
+      getETFAtoZApi()
+      .then(res => {
+        console.log(res,1111)
+        setTableData(res)
+      })
+    }
+    if(selectedTab.value === "Fund Flow") {
+      getETFFundFlowApi()
+      .then(res => {
+        setTableData(res)
+      })
+    }
+    if(selectedTab.value === "Return") {
+      getETFReturnApi()
+      .then(res => {
+        setTableData(res)
+      })
+    }
+    if(selectedTab.value === "AUM") {
+      getETFAumApi()
+      .then(res => {
+        setTableData(res)
+      })
+    }
+    if(selectedTab.value === "Expense") {
+      getETFExpenseApi()
+      .then(res => {
+        setTableData(res)
+      })
+    }
+    if(selectedTab.value === "Dividend") {
+      getETFDividendApi()
+      .then(res => {
+        setTableData(res)
+      })
+    }
+    if(selectedTab.value === "Issuer Revenue") {
+      getETFIssuerRevenueApi()
+      .then(res => {
+        setTableData(res)
+      })
+    }
+  }
+}
+
+const activeTabChange = (value: string) => {
+  activeTab.value = value
+  updateColumns()
+}
+
+
 
 // 控制每个表格的展开状态，类型安全
 const expanded = reactive<Record<number, boolean>>({});
-tableList.forEach((_, idx) => expanded[idx] = false);
+tableList.value.forEach((_, idx) => (expanded[idx] = false));
 
 const columnClick = (row: any, prop: string) => {
   console.log(row, prop);
   router.push({
-    name: 'etfs-list',
+    name: "etfs-list",
     query: {
       theme: row[prop],
     },
   });
 };
+
 </script>
 
 <template>
   <div class="etf-directory-container">
     <h1 class="etf-title">ETF Directory</h1>
     <p class="etf-desc">
-      随着ETF市场的不断扩展，您可以使用下表来缩小不同ETF主题的范围。它们涵盖了各种资产类别、行业、发行人和投资风格。所有基金都属于多个ETF主题。例如，杠杆型美国国债ETF既是"杠杆债券"，也是"政府债券"、"债券"、"美国"以及"北美"区域。
+      随着 ETF 领域的持续拓展，可利用下方表格筛选感兴趣的 ETF 主题 范围。ETF
+      产品涵盖广泛的资产类别、行业领域、发行机构及投资风 格。一只 ETF
+      产品可能同时归属于多重主题类别；例如，一只名称为 “嘉实中证机器人
+      ETF”（产品代码：159526）的主题类 ETF 产品，
+      可同时归类为资产类型为““股票”，行业类型为“工业”，市值风格为
+      “小盘”且投资风格属于“成长”。
     </p>
     <div class="etf-tabs">
       <button
         v-for="tab in tabs"
         :key="tab.value"
-        @click="activeTab = tab.value"
-        :class="['etf-tab-btn', { active: activeTab === tab.value },
+        @click="activeTabChange(tab.value)"
+        :class="[
+          'etf-tab-btn',
+          { active: activeTab === tab.value },
           tabs.indexOf(tab) === 0 ? 'first' : '',
-          tabs.indexOf(tab) === tabs.length - 1 ? 'last' : ''
+          tabs.indexOf(tab) === tabs.length - 1 ? 'last' : '',
         ]"
       >
         {{ tab.label }}
       </button>
     </div>
 
-    <section v-for="(table, idx) in tableList" :key="table.title" class="etf-table-section">
+    <section
+      v-for="(table, idx) in tableList"
+      :key="table.title"
+      class="etf-table-section"
+    >
       <h2 class="etf-table-title">{{ table.title }}</h2>
-      <el-table :data="expanded[idx] || table.data.length <= 3 ? table.data : table.data.slice(0, 3)" class="etf-el-table" :header-cell-style="{ background: '#f5f5fa', color: '#4B2994', fontWeight: 'bold', fontSize: '1rem' }" :cell-style="{ fontSize: '1rem', padding: '0.7rem' }">
+      <el-table
+        :data="
+          expanded[idx] || table.data.length <= 3
+            ? table.data
+            : table.data.slice(0, 3)
+        "
+        class="etf-el-table"
+        :header-cell-style="{
+          background: '#f5f5fa',
+          color: '#4B2994',
+          fontWeight: 'bold',
+          fontSize: '1rem',
+        }"
+        :cell-style="{ fontSize: '1rem', padding: '0.7rem' }"
+      >
         <el-table-column
-          v-for="col in table.columns"
+          v-for="col in table.currentColumns"
           :key="col.prop"
           :prop="col.prop"
           :label="col.label"
-          :min-width="col.minWidth"
         >
           <template #default="scope">
-            <span class="etf-issuer" @click="columnClick(scope.row, col.prop)">{{ scope.row[col.prop] }}</span>
+            <span
+              class="etf-issuer"
+              @click="columnClick(scope.row, col.prop)"
+              >{{ formatValue(scope.row[col.prop]) }}</span
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -106,18 +328,17 @@ const columnClick = (row: any, prop: string) => {
         @click="expanded[idx] = !expanded[idx]"
       >
         <template v-if="!expanded[idx]">
-          SHOW {{ table.data.length - 3 }} MORE {{ table.title }} <span class="arrow">▼</span>
+          SHOW {{ table.data.length - 3 }} MORE {{ table.title }}
+          <span class="arrow">▼</span>
         </template>
-        <template v-else>
-          SHOW LESS <span class="arrow">▲</span>
-        </template>
+        <template v-else> SHOW LESS <span class="arrow">▲</span> </template>
       </div>
     </section>
   </div>
 </template>
 
 <style scoped lang="scss">
-@use '@/styles/variables.scss' as *;
+@use "@/styles/variables.scss" as *;
 
 $gray-bg: #eee;
 $gray-text: #222;
@@ -126,7 +347,7 @@ $desc-color: #444;
 .etf-directory-container {
   width: 100%;
   padding: 20px;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   box-sizing: border-box;
 
   .etf-title {
@@ -148,11 +369,13 @@ $desc-color: #444;
       font-weight: 500;
       font-size: 1rem;
       height: 44px;
-      background: $gray-bg;
+      // background: $gray-bg;
       color: $gray-text;
-      border: none;
+      border: 1px solid #e5e5e5;
+      border-right: none;
+      border-bottom: none;
       border-radius: 0;
-      transition: background 0.2s, color 0.2s;
+      // transition: background 0.2s, color 0.2s;
       cursor: pointer;
       &.first {
         border-radius: 4px 0 0 4px;

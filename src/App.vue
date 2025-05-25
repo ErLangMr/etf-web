@@ -117,6 +117,7 @@ const toggleMenu = () => {
   flex-direction: column;
   background-color: white;
   overflow-y: auto;
+  color: $text-primary;
 }
 
 .header {
@@ -186,11 +187,11 @@ const toggleMenu = () => {
   transition: color $transition-duration;
 
   &:hover {
-    color: $primary-color;
+    color: var(--theme-purple);
   }
 
   &.router-link-active {
-    color: $primary-color;
+    color: var(--theme-purple);
   }
 }
 

@@ -44,7 +44,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response: AxiosResponse) => {
     const res = response.data
-    console.log(res,22222)
     return res
     // 这里可以根据后端的响应结构定制
     if (res.code !== 200) {

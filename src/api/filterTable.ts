@@ -1,7 +1,7 @@
-import { get } from '@/utils/request'
+import { get, post } from '@/utils/request'
 
-export const getFilterTableApi = () => {
-  return get('/api/funds/by-category')
+export const getFilterTableApi = (params: Record<string, any>) => {
+  return post('/api/funds/by-category', params)
 }
 
 export const getTypeByCategoryApi = (type: string, category?: string) => {

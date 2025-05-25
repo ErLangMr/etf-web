@@ -8,6 +8,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
+import { useRoute } from 'vue-router'
+import { getETFChartDataApi } from '@/api/details'
+
+const route = useRoute()
+const code = route.query.code as string
+console.log(code, 'code')
 const props = defineProps<{
   tabActiveName: string
 }>()
@@ -15,12 +21,12 @@ const chartRef = ref<HTMLDivElement | null>(null)
 let chart: echarts.ECharts | null = null
 
 // 示例数据（请替换为你的真实数据）
-const dates = Array.from({ length: 30 }, (_, i) => {
+let dates = Array.from({ length: 30 }, (_, i) => {
   const date = new Date(2024, 1, 23 + i);
   return date.toISOString().slice(0, 10);
 });
 console.log(dates, 'dates')
-const kData = Array.from({ length: 30 }, (_, i) => {
+let kData = Array.from({ length: 30 }, (_, i) => {
   // 随机生成K线数据，模拟波动
   const base = 600 + Math.floor(Math.sin(i / 5) * 20) + i;
   const open = base + Math.floor(Math.random() * 10 - 5);
@@ -30,7 +36,7 @@ const kData = Array.from({ length: 30 }, (_, i) => {
   return [open, close, low, high];
 });
 console.log(kData, 'kData')
-const volumeData = Array.from({ length: 30 }, () => 3500000 + Math.floor(Math.random() * 1500000));
+let volumeData = Array.from({ length: 30 }, () => 3500000 + Math.floor(Math.random() * 1500000));
 console.log(volumeData, 'volumeData')
 // 生成成交量颜色（与K线涨跌同步）
 const volumeColors = kData.map(item => item[1] > item[0] ? '#26A69A' : '#EF5350');
@@ -41,10 +47,26 @@ watch(() => props.tabActiveName, (newVal) => {
   if (newVal === '价格和数量图表') {
     console.log('条件匹配，准备初始化图表');
     nextTick(() => {
-      initChart();
+      // initChart();
+      getChartData()
     });
   }
 }, { immediate: true });
+
+function getChartData() {
+  console.log(code, 'code')
+  getETFChartDataApi({
+    code: code,
+    startDate : '2025-01-01',
+    endDate : '2025-05-25'
+  }).then((res: any) => {
+    console.log(res, 'res')
+    dates = res.timeArray
+    // kData = res.klineDataArray
+    volumeData = res.volumeArray
+    initChart();
+  })
+}
 
 const initChart = async () => {
   await nextTick()
