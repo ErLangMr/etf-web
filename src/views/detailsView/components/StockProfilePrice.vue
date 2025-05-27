@@ -4,36 +4,47 @@
       <!-- 第一行 -->
       <div class="row">
         <div class="block">
-          <div class="section-title">Vitals</div>
+          <div class="section-title">重要信息</div>
           <div class="info-list">
             <div class="info-row">
-              <span>Issuer</span
-              ><span class="linkStyle" @click.stop="router.push('/proshares')"
-                >BNY Mellon</span
+              <span>发行人</span
+              ><span
+                class="linkStyle"
+                @click.stop="router.push('/proshares')"
+                >{{ props.detailsData?.fundInfoByVitals?.fundMgrs }}</span
               >
             </div>
             <div class="info-row">
-              <span>Brand</span
-              ><span class="linkStyle" @click.stop="router.push('/proshares')"
-                >BNY Mellon</span
+              <span>ETF简称</span
+              ><span
+                class="linkStyle"
+                @click.stop="router.push('/proshares')"
+                >{{ props.detailsData?.fundInfoByVitals?.shortName }}</span
               >
             </div>
-            <div class="info-row"><span>Structure</span><span>ETF</span></div>
             <div class="info-row">
-              <span>Expense Ratio</span><span>0.00%</span>
+              <span>费用率</span>
+              <span>{{ props.detailsData?.fundInfoByVitals?.fee }}</span>
             </div>
             <div class="info-row">
-              <span>ETF Home Page</span><span class="link">Home page</span>
+              <span>基金成立日</span>
+              <span>{{ props.detailsData?.fundInfoByVitals?.setupDate }}</span>
             </div>
             <div class="info-row">
+              <span>跟踪指数名称</span>
+              <span>{{
+                props.detailsData?.fundInfoByVitals?.trackIndexName
+              }}</span>
+            </div>
+            <!-- <div class="info-row">
               <span>Inception</span><span>Apr 09, 2020</span>
             </div>
             <div class="info-row">
               <span>Index Tracked</span><span>Solactive GBS United ...</span>
-            </div>
+            </div> -->
           </div>
         </div>
-        <div class="block">
+        <!-- <div class="block">
           <div class="section-title analyst-title-row">
             <span>Analyst Report</span>
             <button class="fa-report-btn">FA Report PDF</button>
@@ -47,25 +58,69 @@
             funds will help win over investors.
             <span class="see-more">See more</span>
           </div>
+        </div> -->
+        <div class="block">
+          <div class="section-title">ETF 数据库主题</div>
+          <div class="info-list">
+            <div class="info-row">
+              <span>资产类型</span
+              ><span class="link" @click="router.push('/equities')">
+                {{ props.detailsData?.fundInfoByThemes?.category }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>风格属性</span
+              ><span class="link" @click="router.push('/etfs-list')">
+                {{ props.detailsData?.fundInfoByThemes?.styleAttribute }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>市值属性</span
+              ><span class="link" @click="router.push('/etfs-list')">
+                {{ props.detailsData?.fundInfoByThemes?.compMarketCap }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>市值-风格属性</span
+              ><span class="link" @click="router.push('/etfs-list')">
+                {{ props.detailsData?.fundInfoByThemes?.investStrategy }}
+              </span>
+            </div>
+            <!-- <div class="info-row">
+              <span>Region (General)</span
+              ><span class="link" @click="router.push('/etfs-list')">North America</span>
+            </div>
+            <div class="info-row">
+              <span>Region (Specific)</span><span class="link" @click="router.push('/etfs-list')">U.S.</span>
+            </div> -->
+          </div>
         </div>
       </div>
       <!-- 第二行 -->
       <div class="row">
-        <div class="block">
-          <div class="section-title">ETF Database Themes</div>
+        <!-- <div class="block">
+          <div class="section-title">ETF 数据库主题</div>
           <div class="info-list">
             <div class="info-row">
-              <span>Category</span
-              ><span class="link" @click="router.push('/equities')">Large Cap Growth Eq...</span>
+              <span>资产类型</span
+              ><span class="link" @click="router.push('/equities')">
+                {{ props.detailsData?.fundInfoByThemes?.category }}
+              </span>
             </div>
             <div class="info-row">
-              <span>Asset Class</span><span class="link" @click="router.push('/etfs-list')">Equity</span>
+              <span>风格属性</span><span class="link" @click="router.push('/etfs-list')">
+                  {{ props.detailsData?.fundInfoByThemes?.styleAttribute }}
+              </span>
             </div>
             <div class="info-row">
-              <span>Asset Class Size</span><span class="link" @click="router.push('/etfs-list')">Large-Cap</span>
+              <span>市值属性</span><span class="link" @click="router.push('/etfs-list')">
+                {{ props.detailsData.fundInfoByThemes.compMarketCap }}
+              </span>
             </div>
             <div class="info-row">
-              <span>Asset Class Style</span><span class="link" @click="router.push('/etfs-list')">Blend</span>
+              <span>市值-风格属性</span><span class="link" @click="router.push('/etfs-list')">
+                {{ props.detailsData.fundInfoByThemes.investStrategy }}
+              </span>
             </div>
             <div class="info-row">
               <span>Region (General)</span
@@ -75,8 +130,8 @@
               <span>Region (Specific)</span><span class="link" @click="router.push('/etfs-list')">U.S.</span>
             </div>
           </div>
-        </div>
-        <div class="block">
+        </div> -->
+        <!-- <div class="block">
           <div class="section-title">FactSet Classifications</div>
           <div class="info-list">
             <div class="info-row">
@@ -96,52 +151,165 @@
               <span>Weighting Scheme</span><span>Market Cap</span>
             </div>
           </div>
+        </div> -->
+        <div class="block">
+          <div class="section-title">交易数据</div>
+          <div class="info-list">
+            <div class="info-row">
+              <span>开盘价</span
+              ><span>
+                {{ formatValue(props.detailsData?.fundInfoByTrading?.open) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>成交额</span
+              ><span>
+                {{ formatValue(props.detailsData?.fundInfoByTrading?.amount) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>最低价</span
+              ><span>
+                {{ formatValue(props.detailsData?.fundInfoByTrading?.low) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>最高价</span
+              ><span>
+                {{ formatValue(props.detailsData?.fundInfoByTrading?.high) }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>过去 52 周最低价</span
+              ><span>
+                {{
+                  formatValue(
+                    props.detailsData?.fundInfoByTrading?.fiftyTwoWeekLow
+                  )
+                }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>过去 52 周最高价</span
+              ><span>
+                {{
+                  formatValue(
+                    props.detailsData?.fundInfoByTrading?.fiftyTwoWeekHigh
+                  )
+                }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>基金规模</span
+              ><span>
+                {{
+                  formatValue(
+                    props.detailsData?.fundInfoByTrading?.totalMarketValue
+                  )
+                }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>基金份额</span
+              ><span>
+                {{ props.detailsData?.fundInfoByTrading?.unitTotal }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="block">
+          <div class="section-title">历史交易数据</div>
+          <div class="info-list">
+            <div class="info-row">
+              <span>过去 1 个月日均成交额</span>
+              <span>
+                {{
+                  formatValue(
+                    props.detailsData?.fundInfoByHistorical
+                      ?.avgDailyVolumeForMoth
+                  )
+                }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>过去 3 个月日均成交额</span
+              ><span>
+                {{
+                  formatValue(
+                    props.detailsData?.fundInfoByHistorical?.avgDailyVolume
+                  )
+                }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <!-- 第三行 -->
-      <div class="row">
+      <!-- <div class="row">
         <div class="block">
-          <div class="section-title">Trading Data</div>
+          <div class="section-title">交易数据</div>
           <div class="info-list">
-            <div class="info-row"><span>Open</span><span>$113.20</span></div>
-            <div class="info-row"><span>Volume</span><span>75,200</span></div>
-            <div class="info-row"><span>Day Lo</span><span>$113.76</span></div>
-            <div class="info-row"><span>Day Hi</span><span>$113.76</span></div>
+            <div class="info-row"><span>开盘价</span><span>
+              {{ formatValue(props.detailsData.fundInfoByTrading.open) }}
+            </span></div>
+            <div class="info-row"><span>成交额</span><span>
+              {{ formatValue(props.detailsData.fundInfoByTrading.amount) }}
+            </span></div>
+            <div class="info-row"><span>最低价</span><span>
+              {{ formatValue(props.detailsData.fundInfoByTrading.low) }}
+              </span>
+            </div>
+            <div class="info-row"><span>最高价</span><span>
+              {{ formatValue(props.detailsData.fundInfoByTrading.high) }}
+            </span></div>
             <div class="info-row">
-              <span>52 Week Lo</span><span>$91.90</span>
+              <span>过去 52 周最低价</span><span>
+                {{ formatValue(props.detailsData.fundInfoByTrading.fiftyTwoWeekLow) }}
+              </span>
             </div>
             <div class="info-row">
-              <span>52 Week Hi</span><span>$117.13</span>
+              <span>过去 52 周最高价</span><span>
+                {{ formatValue(props.detailsData.fundInfoByTrading.fiftyTwoWeekHigh) }}
+              </span>
             </div>
-            <div class="info-row"><span>AUM</span><span>$2,698.9 M</span></div>
-            <div class="info-row"><span>Shares</span><span>24.0 M</span></div>
+            <div class="info-row"><span>基金规模</span><span>
+              {{ formatValue(props.detailsData.fundInfoByTrading.totalMarketValue) }}
+            </span></div>
+            <div class="info-row"><span>基金份额</span><span>
+              {{ props.detailsData.fundInfoByTrading.unitTotal }}
+            </span></div>
           </div>
         </div>
         <div class="block">
-          <div class="section-title">Historical Trading Data</div>
+          <div class="section-title">历史交易数据</div>
           <div class="info-list">
             <div class="info-row">
-              <span>1 Month Avg. Volume</span><span>142,382</span>
+              <span>过去 1 个月日均成交额</span>
+              <span>
+                {{ formatValue(props.detailsData.fundInfoByHistorical.avgDailyVolumeForMoth) }}
+              </span>
             </div>
             <div class="info-row">
-              <span>3 Month Avg. Volume</span><span>241,087</span>
+              <span>过去 3 个月日均成交额</span><span>
+                {{ formatValue(props.detailsData.fundInfoByHistorical.avgDailyVolume) }}
+              </span>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 第四行：ETF Database Large Cap Growth Equities Category -->
       <div class="">
         <div class="block">
           <EtfCompareTable
-            title="Alternative ETFs in the ETF Database Large Cap Growth Equities Category"
+            title="追踪同一指数的 ETF"
             :columns="columns"
-            :data="table1"
+            :data="tableData"
           />
         </div>
         <div class="block"></div>
       </div>
       <!-- 第五行：FactSet Equity: U.S. - Large Cap Segment -->
-      <div class="">
+      <!-- <div class="">
         <div class="block">
           <EtfCompareTable
             title="Alternative ETFs in the FactSet Equity: U.S. - Large Cap Segment"
@@ -150,7 +318,7 @@
           />
         </div>
         <div class="block"></div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -158,88 +326,67 @@
 <script setup lang="ts">
 import EtfCompareTable from "@/components/EtfCompareTable.vue";
 import { useRouter } from "vue-router";
+import { formatValue } from "@/utils/formatValue";
+import { ref, watch } from "vue";
 
 const router = useRouter();
+const props = defineProps({
+  detailsData: {
+    type: Object,
+    required: true,
+    default: () => ({}),
+  },
+});
+
+watch(
+  () => props.detailsData,
+  (newVal) => {
+    if (newVal) {
+      if (newVal.fundInfoByIndexData) {
+        tableData.value = []
+        Object.keys(newVal.fundInfoByIndexData).forEach((key) => {
+          let typeName = ''
+          if(key === "bestReturn") {
+            typeName = '年初至今回报最高'
+          } else if(key === "highestVolume") {
+            typeName = '流动性最高'
+          } else if(key === "largestSize") {
+            typeName = '规模最大'
+          }else if(key === "lowestFee") {
+            typeName = '费用最低'
+          }
+          tableData.value.push({
+            type: typeName,
+            shortName: newVal.fundInfoByIndexData[key].shortName,
+            fee: newVal.fundInfoByIndexData[key].fee,
+            totalMarketValue: newVal.fundInfoByIndexData[key].totalMarketValue,
+            avgDailyVolumeForYear:
+              newVal.fundInfoByIndexData[key].avgDailyVolumeForYear,
+            ytdReturns: newVal.fundInfoByIndexData[key].ytdReturns,
+          });
+        });
+      }
+    }
+  }
+);
+
 const columns = [
-  { key: "type", label: "Type" },
-  { key: "symbol", label: "Symbol", isLink: true, onClick: (symbol: string) => {
-    router.push(`/details?symbol=${symbol}`);
-  } },
-  { key: "expenseRatio", label: "Expense Ratio" },
-  { key: "assets", label: "Assets" },
-  { key: "avgDailyVol", label: "Avg. Daily Vol" },
-  { key: "ytdReturn", label: "YTD Return" },
+  { key: "type", label: "类型" },
+  {
+    key: "shortName",
+    label: "简称",
+    isLink: true,
+    onClick: (symbol: string) => {
+      router.push(`/details?symbol=${symbol}`);
+    },
+  },
+  { key: "fee", label: "费用率" },
+  { key: "totalMarketValue", label: "基金规模" },
+  { key: "avgDailyVolumeForYear", label: "日均成交额" },
+  { key: "ytdReturns", label: "年初至今回报" },
 ];
 
-const table1 = [
-  {
-    type: "Cheapest",
-    symbol: "BKLC",
-    expenseRatio: "0.00%",
-    assets: "$2.7 B",
-    avgDailyVol: "241,087",
-    ytdReturn: "1.06%",
-  },
-  {
-    type: "Largest (AUM)",
-    symbol: "VOO",
-    expenseRatio: "0.03%",
-    assets: "$650.2 B",
-    avgDailyVol: "9 M",
-    ytdReturn: "1.08%",
-  },
-  {
-    type: "Most Liquid (Volume)",
-    symbol: "QQQ",
-    expenseRatio: "0.20%",
-    assets: "$328.0 B",
-    avgDailyVol: "50 M",
-    ytdReturn: "1.72%",
-  },
-  {
-    type: "Top YTD Performer",
-    symbol: "HERO",
-    expenseRatio: "0.50%",
-    assets: "$135.4 M",
-    avgDailyVol: "51,732",
-    ytdReturn: "22.57%",
-  },
-];
-
-const table2 = [
-  {
-    type: "Cheapest",
-    symbol: "BKLC",
-    expenseRatio: "0.00%",
-    assets: "$2.7 B",
-    avgDailyVol: "241,087",
-    ytdReturn: "1.06%",
-  },
-  {
-    type: "Largest (AUM)",
-    symbol: "VOO",
-    expenseRatio: "0.03%",
-    assets: "$650.2 B",
-    avgDailyVol: "9 M",
-    ytdReturn: "1.08%",
-  },
-  {
-    type: "Most Liquid (Volume)",
-    symbol: "QQQ",
-    expenseRatio: "0.20%",
-    assets: "$328.0 B",
-    avgDailyVol: "50 M",
-    ytdReturn: "1.72%",
-  },
-  {
-    type: "Top YTD Performer",
-    symbol: "SPD",
-    expenseRatio: "0.53%",
-    assets: "$88.6 M",
-    avgDailyVol: "62,519",
-    ytdReturn: "11.14%",
-  },
-];
+const tableData = ref<Record<string, any>[]>([]);
 </script>
 
 <style scoped lang="scss">

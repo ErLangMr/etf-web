@@ -1,27 +1,27 @@
 <template>
   <div class="details-view">
     <div class="details-header">
-      <span class="details-symbol">BKLC</span>
-      <span class="details-title">BNY Mellon US Large Cap Core Equity ETF</span>
+      <span class="details-symbol">{{ detailsTitle.code }}</span>
+      <span class="details-title">{{ detailsTitle.shortName }}</span>
     </div>
     <div class="details-info">
       <div>
-        <span class="details-info-label">Price:</span>
-        $113.66
+        <span class="details-info-label">收盘价:</span>
+        {{ detailsTitle.close }}
         <el-icon><Top style="color: #1a7f37" /></el-icon>
       </div>
       <div>
-        <span class="details-info-label">Change:</span>
-        <span>$0.77 (0.68%)</span>
+        <span class="details-info-label">涨跌:</span>
+        <span>￥{{ formatValue(detailsTitle.change) }}%</span>
       </div>
       <div>
-        <span class="details-info-label">Category:</span>
+        <span class="details-info-label">类型:</span>
         <span class="linkStyle" @click.stop="router.push('/equities')"
-         >Large Cap Growth Equities</span>
+         >{{ detailsTitle.category }}</span>
       </div>
       <div>
-        <span class="details-info-label">Last Updated:</span>
-        <span>May 16, 2025</span>
+        <span class="details-info-label">最近更新日期:</span>
+        <span>{{ detailsTitle.lastUpdated }}</span>
       </div>
     </div>
     <div class="details-content">
@@ -32,10 +32,10 @@
             v-for="(item, index) in tabList"
             :key="index"
             :label="item.label"
-            :name="item.label"
+            :name="item.value"
           >
             <div class="tab-content">
-              <component :is="item.component" :tabActiveName="activeName" />
+              <component :is="item.component" :tabActiveName="activeName" :detailsData />
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -57,6 +57,7 @@
           <component
             :is="tabList.find(tab => tab.value === mobildSelect)?.component || StockProfilePrice"
             :tabActiveName="componentName"
+            :detailsData
           />
         </div>
       </div>
@@ -65,8 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, markRaw, shallowRef } from "vue";
-import { useRouter } from "vue-router";
+import { ref, markRaw, shallowRef, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useDevice } from "@/utils/device";
 import StockProfilePrice from "./components/StockProfilePrice.vue";
 import DividendAndValuation from "./components/DividendAndValuation.vue";
@@ -78,64 +79,93 @@ import FundFlowChart from "./components/FundFlowChart.vue";
 import PriceAndFlowInfluenceChart from "./components/PriceAndFlowInfluenceChart.vue";
 import Performance from "./components/Performance.vue";
 import { Top } from "@element-plus/icons-vue";
+import { formatValue } from "@/utils/formatValue";
+import { getOneDetailsDataApi } from "@/api/details";
+
+
 const router = useRouter();
+const route = useRoute();
 const { isMobile } = useDevice();
-const activeName = ref("股票简介和价格");
+const activeName = ref("StockProfilePrice");
 const mobildSelect = ref('StockProfilePrice');
-const componentName = ref('股票简介和价格');
+const componentName = ref('StockProfilePrice');
 
 function handleChange(val: string) {
   const selectedTab = tabList.value.find(tab => tab.value === val);
-  componentName.value = selectedTab?.label as string;
+  componentName.value = selectedTab?.value as string;
 }
+const detailsData = ref({});
+const detailsTitle = ref({
+  code: '',
+  shortName: '',
+  close: '',
+  change: '',
+  category: '',
+  lastUpdated: '',
+});
+watch(activeName, (newVal) => {
+  if(newVal === 'StockProfilePrice') {
+    getOneDetailsDataApi(route.query.code as string).then(res => {
+      detailsTitle.value = {
+        code: res.code,
+        shortName: res.shortName,
+        close: res.close,
+        change: res.change,
+        category: res.category,
+        lastUpdated: res.lastUpdated,
+      };
+      detailsData.value = res;
+    })
+  }
+}, { immediate: true })
 
 const tabList = ref([
   {
-    label: "股票简介和价格",
+    label: "概况和价格",
     value: 'StockProfilePrice',
     component: markRaw(StockProfilePrice),
   },
-  {
-    label: "股息和估值",
-    value: 'DividendAndValuation',
-    component: markRaw(DividendAndValuation),
-  },
-  {
-    label: "费用率和费用",
-    value: 'ExpenseAndFee',
-    component: markRaw(ExpenseAndFee),
-  },
-  {
-    label: "控股",
-    value: 'Holdings',
-    component: markRaw(Holdings),
-  },
-  {
-    label: "持股分析图表",
-    value: 'HoldingAnalysisChart',
-    component: markRaw(HoldingAnalysisChart),
-  },
+  // {
+  //   label: "股息和估值",
+  //   value: 'DividendAndValuation',
+  //   component: markRaw(DividendAndValuation),
+  // },
+  // {
+  //   label: "费用率和费用",
+  //   value: 'ExpenseAndFee',
+  //   component: markRaw(ExpenseAndFee),
+  // },
+  // {
+  //   label: "控股",
+  //   value: 'Holdings',
+  //   component: markRaw(Holdings),
+  // },
+  // {
+  //   label: "持股分析图表",
+  //   value: 'HoldingAnalysisChart',
+  //   component: markRaw(HoldingAnalysisChart),
+  // },
   // {
   //   label: "价格和数量图表",
   //   value: 'PriceAndVolumeChart',
   //   component: markRaw(PriceAndVolumeChart),
   // },
   {
-    label: "基金流动图表",
+    label: "资金流动图表",
     value: 'FundFlowChart',
     component: markRaw(FundFlowChart),
   },
-  {
-    label: "价格与流量影响力图表",
-    value: 'PriceAndFlowInfluenceChart',
-    component: markRaw(PriceAndFlowInfluenceChart),
-  },
+  // {
+  //   label: "价格与流量影响力图表",
+  //   value: 'PriceAndFlowInfluenceChart',
+  //   component: markRaw(PriceAndFlowInfluenceChart),
+  // },
   // {
   //   label: "ESG",
   //   component: "ESG",
   // },
   {
-    label: "性能",
+    label: "业绩表现",
     value: 'Performance',
     component: markRaw(Performance),
   },
@@ -182,8 +212,12 @@ const tabList = ref([
   }
   .details-content {
     margin-top: 20px;
+    height: calc(100vh - 350px);
     .details-tabs {
-      height: 100%;
+      // height: 100%;
+      :deep(.el-tabs__header) {
+        height: 500px;
+      }
       :deep(.el-tabs__item) {
         width: 150px;
         height: 50px;
@@ -230,6 +264,20 @@ const tabList = ref([
   .tab-content {
     padding: 0 20px;
     max-width: 750px;
+  }
+  @media (max-width: 768px) {
+    .details-view{
+      padding: 0;
+    }
+    .tab-content{
+      padding: 0;
+    }
+    .details-header{
+      display: block;
+      .details-symbol{
+        margin-right: 10px;
+      }
+    }
   }
 }
 </style>

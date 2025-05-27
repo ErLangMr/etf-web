@@ -9,13 +9,16 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, onUnmounted, watch, nextTick } from "vue";
 import * as echarts from "echarts";
+import { useDevice } from "@/utils/device";
+
 let myChart: echarts.ECharts | null = null;
 const props = defineProps<{
   tabActiveName: string;
 }>();
 
 watch(() => props.tabActiveName, (newVal) => {
-  if (newVal === '基金流动图表') {
+  console.log(newVal, 33322211)
+  if (newVal === 'FundFlowChart') {
     nextTick(() => {
       initChart()
     })
@@ -32,6 +35,8 @@ function getRecentDates(days: number) {
   return arr;
 }
 const xAxisData = getRecentDates(15);
+console.log(xAxisData, 111111)
+const { isMobile } = useDevice();
 
 function resizeChart() {
   if (myChart) {
@@ -42,6 +47,10 @@ function resizeChart() {
 const initChart = async () => {
   await nextTick()
   const chartDom = document.getElementById("fund-flow-chart");
+  if(myChart) {
+    myChart.dispose();
+    myChart = null;
+  }
   myChart = echarts.init(chartDom);
   const option = {
     title: {
@@ -102,7 +111,7 @@ const initChart = async () => {
             return params.value >= 0 ? "#2ca02c" : "#d62728";
           },
         },
-        barWidth: 12,
+        barWidth: isMobile() ? 8 : 16,
       },
     ],
     tooltip: {

@@ -7,22 +7,30 @@
       <div class="table-header" :style="{ gridTemplateColumns: gridTemplateColumns }">
         <div v-for="col in columns" :key="col.key">{{ col.label }}</div>
       </div>
-      <div class="table-row" v-for="(row, idx) in data" :key="idx" :style="{ gridTemplateColumns: gridTemplateColumns }">
-        <div v-for="col in columns" :key="col.key">
-          <span
+      <template v-if="data.length > 0">
+        <div class="table-row" v-for="(row, idx) in data" :key="idx" :style="{ gridTemplateColumns: gridTemplateColumns }">
+          <div v-for="col in columns" :key="col.key">
+            <span
             v-if="col.isLink"
             class="link"
             @click="col.onClick ? col.onClick(row[col.key], row) : null"
           >{{ row[col.key] }}</span>
-          <span v-else>{{ row[col.key] }}</span>
+          <span v-else>{{ formatValue(row[col.key]) }}</span>
         </div>
       </div>
+      </template>
+      <template v-else>
+        <div class="table-NoData">
+          <div class="table-cell">暂无数据</div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { formatValue } from "@/utils/formatValue";
 
 const props = defineProps<{
   title?: string
@@ -76,5 +84,17 @@ const gridTemplateColumns = computed(() => {
   color: var(--theme-purple);
   cursor: pointer;
   text-decoration: underline;
+}
+.table-NoData {
+  text-align: center;
+  padding: 30px 0;
+}
+@media (max-width: 768px) {
+  .etf-table {
+    overflow-x: auto;
+    .table-header, .table-row{
+      min-width: 700px;
+    }
+  }
 }
 </style>
