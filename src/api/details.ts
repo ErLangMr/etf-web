@@ -7,3 +7,7 @@ export const getETFChartDataApi = (params: any) => {
 export const getOneDetailsDataApi = (params: any): Promise<any> => {
   return get(`/api/funds/by-code/${params}`)
 }
+
+export const getFundFlowDataApi = (params: any): Promise<any> => {
+  return get(`/api/funds/by-code/net-inflow`, params)
+}

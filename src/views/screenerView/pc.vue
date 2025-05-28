@@ -130,6 +130,11 @@ onMounted(() => {
 </script>
 
 <template>
+  <div>
+    <div class="screener-header">
+      <h1 class="screener-title">ETF筛选器</h1>
+    </div>
+  </div>
   <div class="screener-pc">
     <!-- 移动端 Filter 按钮 -->
     <button
@@ -185,6 +190,12 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.screener-header {
+  width: 100%;
+  padding: 20px;
+  padding-bottom: 0;
+  background: #fff;
+}
 .screener-pc {
   display: flex;
   flex-direction: row;

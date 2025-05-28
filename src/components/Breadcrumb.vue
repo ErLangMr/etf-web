@@ -6,6 +6,7 @@ import { HomeFilled } from '@element-plus/icons-vue'
 interface BreadcrumbItem {
   path: string
   title: string
+  query?: Record<string, any>
 }
 
 const route = useRoute()
@@ -26,6 +27,7 @@ const saveVisitHistory = (items: BreadcrumbItem[]) => {
 // 生成面包屑数据
 const generateBreadcrumbs = () => {
   const history = getVisitHistory()
+  console.log(route, 'dddddddd')
   const currentPath = route.path
 
   // 如果是首页，清空历史
@@ -42,7 +44,8 @@ const generateBreadcrumbs = () => {
   const currentTitle = route.meta.title as string || route.name as string || '未命名'
   const currentItem = {
     path: currentPath,
-    title: currentTitle
+    title: currentTitle,
+    query: route.query?.code ? { code: route.query.code } : {}
   }
 
   // 检查是否已经在历史记录中
@@ -90,10 +93,11 @@ onMounted(() => {
 })
 
 // 点击面包屑项
-const handleClick = (path: string) => {
-  if (path === '...') return // 点击省略号不跳转
-  if (path === route.path) return // 如果点击当前路径，不进行跳转
-  router.push(path)
+const handleClick = (item: BreadcrumbItem) => {
+  console.log(item, 'path')
+  if (item.path === '...') return // 点击省略号不跳转
+  if (item.path === route.path) return // 如果点击当前路径，不进行跳转
+  router.push({path: item.path, query: item.query})
 }
 
 // 判断是否为首页
@@ -106,7 +110,7 @@ const isHome = (path: string) => path === '/'
       <el-breadcrumb-item
         v-for="(item, index) in breadcrumbs"
         :key="item.path"
-        @click="handleClick(item.path)"
+        @click="handleClick(item)"
       >
         <template v-if="isHome(item.path)">
           <el-icon class="breadcrumb-icon"><HomeFilled /></el-icon>

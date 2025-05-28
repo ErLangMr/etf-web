@@ -35,7 +35,12 @@
             :name="item.value"
           >
             <div class="tab-content">
-              <component :is="item.component" :tabActiveName="activeName" :detailsData />
+              <component
+              :is="item.component"
+              :tabActiveName="activeName"
+              :detailsData="detailsData"
+              :code="route.query?.code as string"
+              />
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -57,7 +62,8 @@
           <component
             :is="tabList.find(tab => tab.value === mobildSelect)?.component || StockProfilePrice"
             :tabActiveName="componentName"
-            :detailsData
+            :detailsData="detailsData"
+            :code="route.query?.code as string"
           />
         </div>
       </div>
