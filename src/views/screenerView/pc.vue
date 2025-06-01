@@ -53,17 +53,26 @@ watch(selectedChild, (newVal) => {
 watch(
   selectedItems,
   (newVal) => {
-    console.log(newVal, newVal.length, 22222);
+    // 如果是重置操作，直接清空参数并请求
+    if (newVal.length === 0 && !selectedChild.value) {
+      paramsObj.codes = null;
+      paramsObj.category = null;
+      page.value = 1;
+      getFilterTableData(paramsObj);
+      return;
+    }
+
+    // 正常筛选逻辑
     if (newVal.length > 0) {
-      paramsObj.codes = newVal
-      paramsObj.category = null
-      page.value = 1
-      getFilterTableData(paramsObj)
-    }else if(selectedChild.value){
-      paramsObj.codes = null
-      paramsObj.category = selectedChild.value
-      page.value = 1
-      debouncedGetFilterTableData(paramsObj)
+      paramsObj.codes = newVal;
+      paramsObj.category = null;
+      page.value = 1;
+      getFilterTableData(paramsObj);
+    } else if (selectedChild.value) {
+      paramsObj.codes = null;
+      paramsObj.category = selectedChild.value;
+      page.value = 1;
+      debouncedGetFilterTableData(paramsObj);
     }
   },
   { deep: true }
@@ -83,11 +92,11 @@ watch(sliderItems, (newVal) => {
         obj[key] = item[key]
       })
     })
-    console.log(obj, 55555);
     Object.assign(paramsObj, obj)
     page.value = 1
     getFilterTableData(paramsObj)
   }else{
+    sliderValue = []
     paramsObj = {}
     page.value = 1
     getFilterTableData()
@@ -109,7 +118,6 @@ function getFilterTableData(params?: Record<string, any>) {
   }
   getFilterTableApi(obj).then((res: any) => {
     etfList.value = res.content
-    console.log(etfList.value, 55555);
     total.value = res.totalElements
   });
 }
@@ -181,6 +189,7 @@ onMounted(() => {
         <el-pagination
         v-model:current-page="page"
         layout="total, prev, pager, next"
+        :pager-count="!isMobile() ? 7 : 3"
         :total="total"
         :page-size="pageSize"
         @current-change="handlePageChange" />

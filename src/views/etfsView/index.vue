@@ -252,7 +252,7 @@ const columnClick = (row: any, prop: string) => {
   router.push({
     name: "etfs-list",
     query: {
-      theme: row[prop],
+      theme: JSON.stringify(row),
     },
   });
 };
@@ -289,8 +289,7 @@ const columnClick = (row: any, prop: string) => {
     <section
       v-for="(table, idx) in tableList"
       :key="table.title"
-      class="etf-table-section"
-    >
+      class="etf-table-section">
       <h2 class="etf-table-title">{{ table.title }}</h2>
       <el-table
         :data="

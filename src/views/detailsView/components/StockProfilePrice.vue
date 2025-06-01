@@ -10,7 +10,7 @@
               <span>发行人</span
               ><span
                 class="linkStyle"
-                @click.stop="router.push('/proshares')"
+                @click.stop="clickVitals(props.detailsData?.fundInfoByVitals)"
                 >{{ props.detailsData?.fundInfoByVitals?.fundMgrs }}</span
               >
             </div>
@@ -18,7 +18,7 @@
               <span>ETF简称</span
               ><span
                 class="linkStyle"
-                @click.stop="router.push('/proshares')"
+                @click.stop="clickVitals(props.detailsData?.fundInfoByVitals)"
                 >{{ props.detailsData?.fundInfoByVitals?.shortName }}</span
               >
             </div>
@@ -338,6 +338,15 @@ const props = defineProps({
   },
 });
 
+function clickVitals(data: any) {
+  router.push({
+    path: '/proshares',
+    query: {
+      issuer: JSON.stringify(data),
+    },
+  })
+}
+
 watch(
   () => props.detailsData,
   (newVal) => {
@@ -375,10 +384,10 @@ const columns = [
   {
     key: "shortName",
     label: "简称",
-    isLink: true,
-    onClick: (symbol: string) => {
-      router.push(`/details?symbol=${symbol}`);
-    },
+    // isLink: true,
+    // onClick: (symbol: string) => {
+    //   router.push(`/details?symbol=${symbol}`);
+    // },
   },
   { key: "fee", label: "费用率" },
   { key: "totalMarketValue", label: "基金规模" },

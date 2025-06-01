@@ -11,3 +11,7 @@ export const getOneDetailsDataApi = (params: any): Promise<any> => {
 export const getFundFlowDataApi = (params: any): Promise<any> => {
   return get(`/api/funds/by-code/net-inflow`, params)
 }
+
+export const getPerformanceDataApi = (params: any): Promise<any> => {
+  return get(`/api/funds/by-code/performance/${params}`)
+}

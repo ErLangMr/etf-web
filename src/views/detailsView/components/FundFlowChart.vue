@@ -3,11 +3,13 @@
     <h2 class="h3">{{ code }}资金流动图表</h2>
     <p>查看包含 ETF 基金流量数据的图表。</p>
     <div class="fund-flow-chart-btn">
-      <span :class="activeBtn === '1month' ? 'activeBtn' : ''" @click="handleChange('1month')">过去 1 个月</span>
-      <span :class="activeBtn === '3month' ? 'activeBtn' : ''" @click="handleChange('3month')">3 个月</span>
-      <span :class="activeBtn === '6month' ? 'activeBtn' : ''" @click="handleChange('6month')">6 个月</span>
-      <span :class="activeBtn === '1year' ? 'activeBtn' : ''" @click="handleChange('1year')">1 年</span>
-      <span :class="activeBtn === '3year' ? 'activeBtn' : ''" @click="handleChange('3year')">3 年的日净流入</span>
+      <span>过去</span>
+      <span class="span" :class="activeBtn === '1month' ? 'activeBtn' : ''" @click="handleChange('1month')"> 1 个月</span>
+      <span class="span" :class="activeBtn === '3month' ? 'activeBtn' : ''" @click="handleChange('3month')">3 个月</span>
+      <span class="span" :class="activeBtn === '6month' ? 'activeBtn' : ''" @click="handleChange('6month')">6 个月</span>
+      <span class="span" :class="activeBtn === '1year' ? 'activeBtn' : ''" @click="handleChange('1year')">1 年</span>
+      <span class="span" :class="activeBtn === '3year' ? 'activeBtn' : ''" @click="handleChange('3year')">3 年</span>
+      <span>的日净流入</span>
     </div>
     <div v-loading="loading" id="fund-flow-chart"></div>
   </div>
@@ -39,13 +41,15 @@ watch(() => props.tabActiveName, (newVal) => {
     loading.value = true
     getFundFlowDataApi({
       code: props.code,
-      type: 'M',
+      // type: 'M',
       startDate: getMonthAgoDate(1),
       endDate: new Date().toISOString().slice(0, 10)
     }).then((res) => {
       xAxisData.value = res.x
       seriesData.value = res.y
       initChart()
+      loading.value = false
+    }).catch(() => {
       loading.value = false
     })
   }
@@ -97,13 +101,15 @@ const handleChange = (type: string) => {
   loading.value = true
   getFundFlowDataApi({
     code: props.code,
-    type: typeVal,
+    // type: typeVal,
     startDate,
     endDate
   }).then((res) => {
     xAxisData.value = res.x
     seriesData.value = res.y
     initChart()
+    loading.value = false
+  }).catch(() => {
     loading.value = false
   })
 }
@@ -174,7 +180,7 @@ const initChart = async () => {
             return params.value >= 0 ? "#2ca02c" : "#d62728";
           },
         },
-        barWidth: isMobile() ? 8 : 16,
+        // barWidth: isMobile() ? 8 : 16,
       },
     ],
     tooltip: {
@@ -213,9 +219,10 @@ onUnmounted(() => {
   }
   .fund-flow-chart-btn {
     display: flex;
+    align-items: center;
     gap: 10px;
     margin: 10px 0;
-    span {
+    .span {
       cursor: pointer;
       background: rgb(236, 234, 234);
       padding: 5px 10px;
@@ -229,6 +236,13 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   #fund-flow-chart {
     height: 220px;
+  }
+  .fund-flow-chart-btn{
+    display: flex;
+    flex-wrap: wrap;
+    .span{
+      width: 60px;
+    }
   }
 }
 </style>

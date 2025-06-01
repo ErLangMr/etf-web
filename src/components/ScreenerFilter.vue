@@ -37,11 +37,16 @@ interface NormalFilterItem extends BaseFilterItem {
 // 范围项接口
 interface RangeChildItem {
   label: string;
-  value: string;
+  value?: string;
   type: "slider" | "date";
   paramKeys: string[];
   range?: [number, number];
   date?: [string, string];
+  unit?: string;
+  id?: string;
+  fundType?: string;
+  count?: number;
+  codes?: string[];
 }
 
 // 范围筛选项接口
@@ -88,8 +93,8 @@ function initSliderValues() {
         if (child.type === "slider" && child.range) {
           sliderValues.value[key] = [...child.range] as [number, number];
         }
-        if (child.type === "date" && child.date) {
-          dateValues.value[key] = [child.date[0], child.date[1]];
+        if (child.type === "date" && (child as any).date) {
+          dateValues.value[key] = [(child as any).date[0], (child as any).date[1]];
         }
       });
     }
@@ -199,29 +204,29 @@ const filterData = [
     type: "slider",
     children: [
       {
-        label: "托管费率(%)",
+        label: "费率(%)",
         type: "slider",
         paramKeys: ["custodyFeeStart", "custodyFeeEnd"],
-        range: [0, 100],
+        range: [0, 19],
       },
       {
-        label: "单位分红率(%)",
+        label: "分红率(%)",
         type: "slider",
         paramKeys: ["divYieldStart", "divYieldEnd"],
-        range: [0, 100],
+        range: [0, 782],
       },
-      {
-        label: "管理费率(%)",
-        type: "slider",
-        paramKeys: ["managementFeeStart", "managementFeeEnd"],
-        range: [0, 100],
-      },
-      {
-        label: "销售服务费率(%)",
-        type: "slider",
-        paramKeys: ["serviceFeeStart", "serviceFeeEnd"],
-        range: [0, 100],
-      },
+      // {
+      //   label: "管理费率(%)",
+      //   type: "slider",
+      //   paramKeys: ["managementFeeStart", "managementFeeEnd"],
+      //   range: [0, 100],
+      // },
+      // {
+      //   label: "销售服务费率(%)",
+      //   type: "slider",
+      //   paramKeys: ["serviceFeeStart", "serviceFeeEnd"],
+      //   range: [0, 100],
+      // },
     ],
   },
   {
@@ -230,22 +235,32 @@ const filterData = [
     type: "slider",
     children: [
       {
-        label: "日均成交量(元)",
+        label: "日均成交量(百万股)",
         type: "slider",
         paramKeys: ["avgDailyVolumeStart", "avgDailyVolumeEnd"],
-        range: [0, 99999999],
+        unit: "百万",
+        range: [0, 1000],
+      },
+      {
+        label: "日均成交额(百万元)",
+        type: "slider",
+        paramKeys: ["avgDailyVolumeStart", "avgDailyVolumeEnd"],
+        unit: "百万",
+        range: [0, 1000],
       },
       {
         label: "交易价格(元)",
         type: "slider",
         paramKeys: ["currentCloseStart", "currentCloseEnd"],
-        range: [0, 99999999],
+        unit: "元",
+        range: [0, 500],
       },
       {
-        label: "资产规模(元)",
+        label: "资产规模(百万元)",
         type: "slider",
         paramKeys: ["totalMarketValueStart", "totalMarketValueEnd"],
-        range: [0, 99999999],
+        unit: "百万",
+        range: [0, 700000],
       },
       {
         label: "成立日期",
@@ -264,37 +279,37 @@ const filterData = [
         label: "近一周收益(%)",
         type: "slider",
         paramKeys: ["weeklyReturnsStart", "weeklyReturnsEnd"],
-        range: [0, 100],
+        range: [-100, 25],
       },
       {
         label: "近一月收益(%)",
         type: "slider",
         paramKeys: ["monthlyReturnsStart", "monthlyReturnsEnd"],
-        range: [0, 100],
+        range: [-1000, 130],
       },
       {
         label: "今年以来收益(%)",
         type: "slider",
         paramKeys: ["ytdReturnsStart", "ytdReturnsEnd"],
-        range: [0, 100],
+        range: [-100, 200],
       },
       {
         label: "近一年收益(%)",
         type: "slider",
         paramKeys: ["yearlyReturnsStart", "yearlyReturnsEnd"],
-        range: [0, 100],
+        range: [-100, 750],
       },
       {
         label: "近三年收益(%)",
         type: "slider",
         paramKeys: ["threeYearReturnsStart", "threeYearReturnsEnd"],
-        range: [0, 100],
+        range: [-100, 100],
       },
       {
         label: "近五年收益(%)",
         type: "slider",
         paramKeys: ["fiveYearReturnsStart", "fiveYearReturnsEnd"],
-        range: [0, 100],
+        range: [-100, 100],
       },
     ],
   },
@@ -304,7 +319,7 @@ const filterData = [
     type: "slider",
     children: [
       {
-        label: "ESG评分",
+        label: "基金Wind ESG综合得分",
         type: "slider",
         paramKeys: ["esgScoreStart", "esgScoreEnd"],
         range: [0, 100],
@@ -317,41 +332,47 @@ const filterData = [
     type: "slider",
     children: [
       {
-        label: "近 1 周净流入额(元)",
+        label: "近 1 周净流入额(百万元)",
         type: "slider",
         paramKeys: ["weeklyNetInflowsStart", "weeklyNetInflowsEnd"],
-        range: [-100000, 999999999],
+        unit: "百万",
+        range: [-70, 600],
       },
       {
-        label: "近 1 月净流入额(元)",
+        label: "近 1 月净流入额(百万元)",
         type: "slider",
         paramKeys: ["monthlyNetInflowsStart", "monthlyNetInflowsEnd"],
-        range: [-1000000, 999999999],
+        unit: "百万",
+        range: [-50, 800],
       },
       {
-        label: "今年以来净流入额(元)",
+        label: "近 3 月净流入额(百万元)",
+        type: "slider",
+        paramKeys: ["threeMonthNetInflowsStart", "threeMonthNetInflowsEnd"],
+        unit: "百万",
+        range: [-120, 2400],
+      },
+      {
+        label: "今年以来净流入额(百万元)",
         type: "slider",
         paramKeys: ["ytdNetInflowsStart", "ytdNetInflowsEnd"],
-        range: [-1000000, 999999999],
+        unit: "百万",
+        range: [-2100, 10000],
       },
       {
-        label: "近 1 年净流入额(元)",
+        label: "近 1 年净流入额(百万元)",
         type: "slider",
         paramKeys: ["yearlyNetInflowsStart", "yearlyNetInflowsEnd"],
-        range: [-10000000, 999999999],
+        unit: "百万",
+        range: [-10000, 21000],
       },
       {
-        label: "近 3 年净流入额(元)",
+        label: "近 3 年净流入额(百万元)",
         type: "slider",
         paramKeys: ["threeYearNetInflowsStart", "threeYearNetInflowsEnd"],
-        range: [-100000000, 999999999],
-      },
-      {
-        label: "近 5 年净流入额(元)",
-        type: "slider",
-        paramKeys: ["fiveYearNetInflowsStart", "fiveYearNetInflowsEnd"],
-        range: [-1000000000, 999999999999],
-      },
+        unit: "百万",
+        range: [-10000, 36000],
+      }
     ],
   },
   {
@@ -360,10 +381,22 @@ const filterData = [
     type: "slider",
     children: [
       {
-        label: "收益标准差(%)",
+        label: "近一月收益标准差(%)",
         type: "slider",
         paramKeys: ["std52WeekStart", "std52WeekEnd"],
-        range: [0, 100],
+        range: [0, 110],
+      },
+      {
+        label: "近三月收益标准差(%)",
+        type: "slider",
+        paramKeys: ["std52WeekStart", "std52WeekEnd"],
+        range: [0, 120],
+      },
+      {
+        label: "近一年收益标准差(%)",
+        type: "slider",
+        paramKeys: ["std52WeekStart", "std52WeekEnd"],
+        range: [0, 130],
       },
       {
         label: "Beta值",
@@ -372,29 +405,35 @@ const filterData = [
         range: [0, 10],
       },
       {
-        label: "5日波动率(%)",
+        label: "近一月年化波动率(%)",
         type: "slider",
         paramKeys: ["volatility5DayStart", "volatility5DayEnd"],
-        range: [0, 100],
+        range: [0, 300],
       },
       {
-        label: "20日波动率(%)",
+        label: "近三月年化波动率(%)",
         type: "slider",
         paramKeys: ["volatility20DayStart", "volatility20DayEnd"],
-        range: [0, 100],
+        range: [0, 250],
       },
       {
-        label: "50日波动率(%)",
+        label: "近一年年化波动率(%)",
         type: "slider",
         paramKeys: ["volatility50DayStart", "volatility50DayEnd"],
-        range: [0, 100],
+        range: [0, 200],
       },
       {
-        label: "200日波动率(%)",
+        label: "最大回撤(%)",
         type: "slider",
-        paramKeys: ["volatility200DayStart", "volatility200DayEnd"],
-        range: [0, 100],
+        paramKeys: ["volatility50DayStart", "volatility50DayEnd"],
+        range: [0, 300],
       },
+      // {
+      //   label: "200日波动率(%)",
+      //   type: "slider",
+      //   paramKeys: ["volatility200DayStart", "volatility200DayEnd"],
+      //   range: [0, 100],
+      // },
     ],
   },
   {
@@ -506,6 +545,7 @@ function resetFilters() {
   sliderValues.value = {};
   dateValues.value = {};
   checkedArr.value = [];
+  // 确保完全清除所有滑块值
   emit("update:selectedItems", []);
   emit("update:selectedChild", "");
   emit("update:sliderItems", {});
@@ -577,17 +617,26 @@ function handleRadioChange(value: string) {
 function handleRangeChange(
   value: number[],
   filterValue: string,
-  paramKeys: string[]
+  paramKeys: string[],
+  unit: string
 ) {
   const key = `${filterValue}_${paramKeys[0]}`;
   if (!sliderValues.value[key]) {
     sliderValues.value[key] = [0, 0];
   }
+  let val = value
+  if(unit === '百万'){
+    val = [value[0] * 1000000, value[1] * 1000000] as [number, number];
+  } else {
+    val = [value[0], value[1]] as [number, number];
+  }
   sliderValues.value[key] = [value[0], value[1]] as [number, number];
-  emit("update:sliderItems", {
-    [paramKeys[0]]: value[0],
-    [paramKeys[1]]: value[1],
-  });
+  // 创建一个新的对象，只包含当前滑块的值
+  const newSliderItems = {
+    [paramKeys[0]]: val[0],
+    [paramKeys[1]]: val[1],
+  };
+  emit("update:sliderItems", newSliderItems);
 }
 
 // 修改日期处理函数
@@ -610,20 +659,26 @@ function handleSingleDateChange(
 
 // 修改范围输入处理函数
 function handleRangeInputChange(
-  value: string,
+  value: string | number,
   filterValue: string,
   paramKeys: string[],
-  position: 0 | 1
+  position: 0 | 1,
+  unit?: string
 ) {
   const key = `${filterValue}_${paramKeys[0]}`;
   if (!sliderValues.value[key]) {
     sliderValues.value[key] = [0, 0];
   }
-  const numValue = Number(value);
-  if (!isNaN(numValue)) {
+  const numValue = Number(value)
+  let val = numValue
+  if(unit === '百万'){
+    val = numValue * 1000000
+  }
+  if (!isNaN(Number(value))) {
     sliderValues.value[key][position] = numValue;
+    console.log(sliderValues.value, 333344)
     emit("update:sliderItems", {
-      [paramKeys[position]]: numValue,
+      [paramKeys[position]]: val,
     });
   }
 }
@@ -747,37 +802,39 @@ function handleRangeInputChange(
                   :min="item.range?.[0] || 0"
                   :max="item.range?.[1] || 100"
                   range
-                  @change="(val: number[] | number) => handleRangeChange(Array.isArray(val) ? val : [val, val], filter.value, item.paramKeys)"
+                  @change="(val: number[] | number) => handleRangeChange(Array.isArray(val) ? val : [val, val], filter.value, item.paramKeys, (item as any).unit)"
                 />
                 <div class="range-inputs">
                   <el-input
-                    v-model="
+                    v-model.number="
                       sliderValues[`${filter.value}_${item.paramKeys[0]}`][0]
                     "
-                    size="small"
+                    size="default"
                     @change="
                       (val) =>
                         handleRangeInputChange(
                           val,
                           filter.value,
                           item.paramKeys,
-                          0
+                          0,
+                          (item as any).unit
                         )
                     "
                   />
                   <span class="range-separator">-</span>
                   <el-input
-                    v-model="
+                    v-model.number="
                       sliderValues[`${filter.value}_${item.paramKeys[0]}`][1]
                     "
-                    size="small"
+                    size="default"
                     @change="
                       (val) =>
                         handleRangeInputChange(
                           val,
                           filter.value,
                           item.paramKeys,
-                          1
+                          1,
+                          (item as any).unit
                         )
                     "
                   />

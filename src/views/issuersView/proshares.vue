@@ -27,30 +27,73 @@
       </div>
     </div>
     <div class="proshares-table">
-      <h2>ETF Overview</h2>
+      <h2>ETF 概览</h2>
       <div class="list-box">
         <ScreenerTable
           class="table-area"
-          :table-columns="tableColumns"
           :table-data="etfList"
-          :filter-tabs="filterTabs"
-          :active-tab="activeTab"
-          @update:activeTab="activeTab = $event"
-          :description="description"
-        />
+          :hasTableFilter="true">
+          <template #table-pagination>
+            <el-pagination
+              v-model:current-page="page"
+              layout="total, prev, pager, next"
+              :pager-count="!isMobile() ? 7 : 3"
+              :total="total"
+              :page-size="pageSize"
+              @current-change="handlePageChange" />
+          </template>
+        </ScreenerTable>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import ScreenerTable from "@/components/ScreenerTable.vue";
 import * as echarts from "echarts";
+import { useRoute } from "vue-router";
+import { getFilterTableApi } from "@/api/filterTable";
+import { useDevice } from "@/utils/device";
 
-let myChart = null;
+const route = useRoute();
+const issue = JSON.parse(route.query.issuer as string || '{}');
+const { isMobile } = useDevice();
 
-function getRecentDates(days) {
+const page = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
+const getFilterTableData = async () => {
+  const res: any = await getFilterTableApi({
+    page: page.value,
+    pageSize: pageSize.value,
+    fundMgrs: issue.issuer || issue.fundMgrs,
+  });
+  etfList.value = res.content;
+  total.value = res.totalElements;
+};
+
+const handlePageChange = (newPage: number) => {
+  page.value = newPage;
+  getFilterTableData();
+};
+
+let myChart: any = null;
+
+onMounted(() => {
+  initChart();
+  getFilterTableData();
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", resizeChart);
+  if (myChart) {
+    myChart.dispose();
+    myChart = null;
+  }
+});
+const etfList = ref<any[]>([]);
+function getRecentDates(days: number) {
   const arr = [];
   const today = new Date("2025-05-16");
   for (let i = days - 1; i >= 0; i--) {
@@ -68,7 +111,7 @@ function resizeChart() {
   }
 }
 
-onMounted(() => {
+function initChart() {
   const chartDom = document.getElementById("proshares-chart");
   myChart = echarts.init(chartDom);
   const option = {
@@ -97,7 +140,7 @@ onMounted(() => {
         rotate: 40,
         fontSize: 11,
         color: "#666",
-        formatter: function (value) {
+        formatter: function (value: any) {
           return value;
         },
       },
@@ -109,7 +152,7 @@ onMounted(() => {
       max: 0.5,
       splitLine: { show: true },
       axisLabel: {
-        formatter: function (value) {
+        formatter: function (value: any) {
           if (value === 0.5) return "0.5 B";
           if (value === 0) return "0 B";
           if (value === -0.5) return "-0.5 B";
@@ -129,7 +172,7 @@ onMounted(() => {
           0.05, -0.05,
         ],
         itemStyle: {
-          color: function (params) {
+          color: function (params: any) {
             return params.value >= 0 ? "#2ca02c" : "#d62728";
           },
         },
@@ -139,159 +182,15 @@ onMounted(() => {
     tooltip: {
       trigger: "axis",
       axisPointer: { type: "shadow" },
-      formatter: function (params) {
+      formatter: function (params: any) {
         return params[0].axisValue + ": " + params[0].value + " B";
       },
     },
   };
   myChart.setOption(option);
   window.addEventListener("resize", resizeChart);
-});
+}
 
-onUnmounted(() => {
-  window.removeEventListener("resize", resizeChart);
-  if (myChart) {
-    myChart.dispose();
-    myChart = null;
-  }
-});
-const etfList = ref([
-  {
-    symbol: "FTLS",
-    name: "First Trust Long/Short Equity ETF",
-    asset: "Alternatives",
-    total: "$1,951",
-    ytd: "-2.91%",
-    volume: "162,536",
-    price: "$63.75",
-  },
-  {
-    symbol: "DBMF",
-    name: "iMGP DBi Managed Futures Strategy ETF",
-    asset: "Alternatives",
-    total: "$1,191",
-    ytd: "-2.58%",
-    volume: "778,684",
-    price: "$25.31",
-  },
-  {
-    symbol: "CTA",
-    name: "Simplify Managed Futures Strategy ETF",
-    asset: "Alternatives",
-    total: "$1,034",
-    ytd: "-0.25%",
-    volume: "638,084",
-    price: "$27.71",
-  },
-  {
-    symbol: "QAI",
-    name: "NYLI Hedge Multi-Strategy Tracker ETF",
-    asset: "Alternatives",
-    total: "$692",
-    ytd: "0.25%",
-    volume: "69,002",
-    price: "$31.49",
-  },
-  {
-    symbol: "RLY",
-    name: "SPDR SSgA Multi-Asset Real Return ETF",
-    asset: "Alternatives",
-    total: "$477",
-    ytd: "4.52%",
-    volume: "84,514",
-    price: "$28.24",
-  },
-  {
-    symbol: "BTAL",
-    name: "AGF U.S. Market Neutral Anti-Beta Fund",
-    asset: "Alternatives",
-    total: "$389",
-    ytd: "6.11%",
-    volume: "945,519",
-    price: "$19.61",
-  },
-  {
-    symbol: "FLSP",
-    name: "Franklin Systematic Style Premia ETF",
-    asset: "Alternatives",
-    total: "$337",
-    ytd: "0.84%",
-    volume: "55,541",
-    price: "$24.11",
-  },
-  {
-    symbol: "MNA",
-    name: "NYLI Merger Arbitrage ETF",
-    asset: "Alternatives",
-    total: "$234",
-    ytd: "5.43%",
-    volume: "39,944",
-    price: "$34.75",
-  },
-  {
-    symbol: "KMLM",
-    name: "KFA Mount Lucas Managed Futures Index Strategy ETF",
-    asset: "Alternatives",
-    total: "$194",
-    ytd: "-6.37%",
-    volume: "164,363",
-    price: "$26.31",
-  },
-  {
-    symbol: "CLSE",
-    name: "Convergence Long/Short Equity ETF",
-    asset: "Alternatives",
-    total: "$172",
-    ytd: "-3.71%",
-    volume: "116,822",
-    price: "$22.06",
-  },
-  {
-    symbol: "WTMF",
-    name: "WisdomTree Managed Futures Strategy Fund",
-    asset: "Alternatives",
-    total: "$158",
-    ytd: "-1.23%",
-    volume: "27,181",
-    price: "$34.50",
-  },
-  {
-    symbol: "FMF",
-    name: "First Trust Managed Futures Strategy Fund",
-    asset: "Alternatives",
-    total: "$151",
-    ytd: "-4.02%",
-    volume: "25,977",
-    price: "$45.43",
-  },
-]);
-
-// 表头配置
-const tableColumns = ref([
-  { prop: "symbol", label: "Symbol", type: "link", url: "/etf-detail" },
-  { prop: "name", label: "ETF Name", type: "link", url: "/etf-detail" },
-  { prop: "asset", label: "Asset Class" },
-  { prop: "total", label: "Total Assets ($MM)" },
-  { prop: "ytd", label: "YTD Price Change" },
-  { prop: "volume", label: "Avg. Daily Share Volume (3mo)" },
-  { prop: "price", label: "Previous Closing Price" },
-]);
-
-const filterTabs = [
-  { label: "Overview", value: "overview" },
-  { label: "Returns", value: "returns" },
-  { label: "Fund Flows", value: "fund-flows" },
-  { label: "Expenses", value: "expenses" },
-  { label: "ESG", value: "esg", icon: true },
-  { label: "Dividends", value: "dividends" },
-  { label: "Risk", value: "risk" },
-  { label: "Holdings", value: "holdings" },
-  { label: "Taxes", value: "taxes" },
-  { label: "Technicals", value: "technicals" },
-  { label: "Analysis", value: "analysis" },
-  { label: "Realtime Ratings", value: "realtime-ratings" },
-];
-const activeTab = ref("overview");
 </script>
 
 <style lang="scss" scoped>

@@ -130,7 +130,14 @@ function updateColumns() {
 }
 const columnClick = (row: any, prop: string) => {
   console.log(row, prop)
-  router.push(`/proshares?issuer=${row.issuer}`)
+  router.push(
+    {
+      path: '/proshares',
+      query: {
+        issuer: JSON.stringify(row),
+      }
+    }
+  )
 }
 </script>
 

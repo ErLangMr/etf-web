@@ -27,7 +27,6 @@ const saveVisitHistory = (items: BreadcrumbItem[]) => {
 // 生成面包屑数据
 const generateBreadcrumbs = () => {
   const history = getVisitHistory()
-  console.log(route, 'dddddddd')
   const currentPath = route.path
 
   // 如果是首页，清空历史
@@ -94,7 +93,6 @@ onMounted(() => {
 
 // 点击面包屑项
 const handleClick = (item: BreadcrumbItem) => {
-  console.log(item, 'path')
   if (item.path === '...') return // 点击省略号不跳转
   if (item.path === route.path) return // 如果点击当前路径，不进行跳转
   router.push({path: item.path, query: item.query})
