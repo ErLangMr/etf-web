@@ -184,6 +184,28 @@ const filterData = [
           },
         ],
       },
+      {
+        label: "货币",
+        value: "CURRENCY",
+        classification: [
+          {
+            label: "货币类型",
+            value: "currencyType",
+            children: [],
+          },
+        ],
+      },
+      {
+        label: "跨境",
+        value: "CROSS_BOUNDARY",
+        classification: [
+          {
+            label: "货币类型",
+            value: "crossType",
+            children: [],
+          },
+        ],
+      },
     ],
   },
   {
@@ -206,7 +228,7 @@ const filterData = [
       {
         label: "费率(%)",
         type: "slider",
-        paramKeys: ["custodyFeeStart", "custodyFeeEnd"],
+        paramKeys: ["feeStart", "feeEnd"],
         range: [0, 19],
       },
       {
@@ -244,7 +266,7 @@ const filterData = [
       {
         label: "日均成交额(百万元)",
         type: "slider",
-        paramKeys: ["avgDailyVolumeStart", "avgDailyVolumeEnd"],
+        paramKeys: ["avgDailyVolumeForYearStart", "avgDailyVolumeForYearEnd"],
         unit: "百万",
         range: [0, 1000],
       },
@@ -383,13 +405,13 @@ const filterData = [
       {
         label: "近一月收益标准差(%)",
         type: "slider",
-        paramKeys: ["std52WeekStart", "std52WeekEnd"],
+        paramKeys: ["std4WeekStart", "std4WeekEnd"],
         range: [0, 110],
       },
       {
         label: "近三月收益标准差(%)",
         type: "slider",
-        paramKeys: ["std52WeekStart", "std52WeekEnd"],
+        paramKeys: ["std12WeekStart", "std12WeekEnd"],
         range: [0, 120],
       },
       {
@@ -402,30 +424,30 @@ const filterData = [
         label: "Beta值",
         type: "slider",
         paramKeys: ["beta52WeekStart", "beta52WeekEnd"],
-        range: [0, 10],
+        range: [-10, 10],
       },
       {
         label: "近一月年化波动率(%)",
         type: "slider",
-        paramKeys: ["volatility5DayStart", "volatility5DayEnd"],
-        range: [0, 300],
+        paramKeys: ["volatility20DayStart", "volatility20DayEnd"],
+        range: [0, 150],
       },
       {
         label: "近三月年化波动率(%)",
         type: "slider",
-        paramKeys: ["volatility20DayStart", "volatility20DayEnd"],
-        range: [0, 250],
+        paramKeys: ["volatility50DayStart", "volatility50DayEnd"],
+        range: [0, 100],
       },
       {
         label: "近一年年化波动率(%)",
         type: "slider",
-        paramKeys: ["volatility50DayStart", "volatility50DayEnd"],
-        range: [0, 200],
+        paramKeys: ["volatility200DayStart", "volatility200DayEnd"],
+        range: [0, 80],
       },
       {
         label: "最大回撤(%)",
         type: "slider",
-        paramKeys: ["volatility50DayStart", "volatility50DayEnd"],
+        paramKeys: ["maxDownSideStart", "maxDownSideEnd"],
         range: [0, 300],
       },
       // {
@@ -801,19 +823,21 @@ function handleRangeInputChange(
                   v-model="sliderValues[`${filter.value}_${item.paramKeys[0]}`]"
                   :min="item.range?.[0] || 0"
                   :max="item.range?.[1] || 100"
+                  :step="0.1"
                   range
                   @change="(val: number[] | number) => handleRangeChange(Array.isArray(val) ? val : [val, val], filter.value, item.paramKeys, (item as any).unit)"
                 />
                 <div class="range-inputs">
-                  <el-input
-                    v-model.number="
+                  <el-input-number
+                    v-model="
                       sliderValues[`${filter.value}_${item.paramKeys[0]}`][0]
                     "
+                    :controls="false"
                     size="default"
                     @change="
                       (val) =>
                         handleRangeInputChange(
-                          val,
+                          val ?? 0,
                           filter.value,
                           item.paramKeys,
                           0,
@@ -822,15 +846,16 @@ function handleRangeInputChange(
                     "
                   />
                   <span class="range-separator">-</span>
-                  <el-input
-                    v-model.number="
+                  <el-input-number
+                    v-model="
                       sliderValues[`${filter.value}_${item.paramKeys[0]}`][1]
                     "
+                    :controls="false"
                     size="default"
                     @change="
                       (val) =>
                         handleRangeInputChange(
-                          val,
+                          val ?? 0,
                           filter.value,
                           item.paramKeys,
                           1,
