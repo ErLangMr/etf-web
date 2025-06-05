@@ -5,6 +5,13 @@ import { getETFAtoZApi, getETFAumApi, getETFExpenseApi, getETFFundFlowApi, getET
 import { formatValue } from '@/utils/formatValue'
 const router = useRouter();
 
+interface TableColumn {
+  prop: string;
+  label: string;
+  minWidth: string;
+  unit?: string;
+}
+
 const tableList = ref([
   {
     title: "资产类别",
@@ -13,7 +20,7 @@ const tableList = ref([
     originalColumns: [
       { prop: "category", label: "资产类型", minWidth: "120" },
     ],
-    currentColumns: [] as { prop: string; label: string; minWidth: string; }[]
+    currentColumns: [] as TableColumn[]
   },
   {
     title: "行业",
@@ -22,6 +29,7 @@ const tableList = ref([
     originalColumns: [
       { prop: "category", label: "行业名称", minWidth: "120" },
     ],
+    currentColumns: [] as TableColumn[]
   },
   {
     title: "地区",
@@ -134,29 +142,29 @@ const tabs = [
       { prop: "totalCount", label: "ETF 数量", minWidth: "120" },
       { prop: "topFundMgr", label: "数量最多发行人", minWidth: "180" },
     ], },
+  { label: "资产规模", value: "AUM",columns: [
+    { prop: "fundFlowRank", label: "资产规模排名", minWidth: "120" },
+    { prop: "dataValue", label: "资产规模(百万元)", minWidth: "120", unit: "million" },
+    { prop: "topFundMgr", label: "发行人", minWidth: "180" },
+  ], },
   { label: "资金流动", value: "Fund Flow",columns: [
       { prop: "fundFlowRank", label: "资金流动排名", minWidth: "120" },
-      { prop: "dataValue", label: "过去三个月的资金净流入额", minWidth: "120" },
+      { prop: "dataValue", label: "过去三个月的资金净流入额(百万元)", minWidth: "120", unit: "million" },
       { prop: "topFundMgr", label: "发行人", minWidth: "180" },
     ], },
   { label: "收益", value: "Return",columns: [
       { prop: "fundFlowRank", label: "收益排名", minWidth: "120" },
-      { prop: "dataValue", label: "过去三个月的平均收益", minWidth: "120" },
-      { prop: "topFundMgr", label: "发行人", minWidth: "180" },
-    ], },
-  { label: "资产规模", value: "AUM",columns: [
-      { prop: "fundFlowRank", label: "资产规模排名", minWidth: "120" },
-      { prop: "dataValue", label: "资产规模", minWidth: "120" },
+      { prop: "dataValue", label: "过去三个月的平均收益(%)", minWidth: "120" },
       { prop: "topFundMgr", label: "发行人", minWidth: "180" },
     ], },
   { label: "费用", value: "Expense",columns: [
       { prop: "fundFlowRank", label: "费用排名", minWidth: "120" },
-      { prop: "dataValue", label: "平均管理费率", minWidth: "120" },
+      { prop: "dataValue", label: "平均费率(%)", minWidth: "120" },
       { prop: "topFundMgr", label: "发行人", minWidth: "180" },
     ], },
   { label: "分红", value: "Dividend",columns: [
       { prop: "fundFlowRank", label: "分红排名", minWidth: "120" },
-      { prop: "dataValue", label: "平均分红率", minWidth: "120" },
+      { prop: "dataValue", label: "平均分红率(%)", minWidth: "120" },
       { prop: "topFundMgr", label: "发行人", minWidth: "180" },
     ], },
   { label: "发行人收入", value: "Issuer Revenue",columns: [
@@ -179,7 +187,7 @@ updateColumns()
         table.currentColumns.pop()
         if(selectedTab.value === "Issuer Revenue") {
           table.currentColumns.push({ prop: "fundFlowRank", label: "发行人收入排名", minWidth: "120" })
-          table.currentColumns.push({ prop: "dataValue", label: "发行人收入", minWidth: "120" })
+          table.currentColumns.push({ prop: "dataValue", label: "发行人收入(百万元)", unit: "million", minWidth: "120" })
         }
 
       }
@@ -247,8 +255,8 @@ const activeTabChange = (value: string) => {
 const expanded = reactive<Record<number, boolean>>({});
 tableList.value.forEach((_, idx) => (expanded[idx] = false));
 
-const columnClick = (row: any, prop: string) => {
-  console.log(row, prop);
+const columnClick = (row: any, prop: string, unit?: string) => {
+  console.log(row, prop, unit);
   router.push({
     name: "etfs-list",
     query: {
@@ -256,7 +264,13 @@ const columnClick = (row: any, prop: string) => {
     },
   });
 };
-
+const categoryList = ref([
+  { label: "股票", value: "EQUITY" },
+  { label: "债券", value: "BOND" },
+  { label: "商品", value: "GOODS" },
+  { label: "货币", value: "CURRENCY" },
+  { label: "跨境", value: "CROSS_BOUNDARY" },
+])
 </script>
 
 <template>
@@ -264,7 +278,7 @@ const columnClick = (row: any, prop: string) => {
     <h1 class="etf-title">ETF 目录</h1>
     <p class="etf-desc">
       随着 ETF 领域的持续拓展，可利用下方表格筛选感兴趣的 ETF 主题 范围。ETF
-      产品涵盖广泛的资产类别、行业领域、发行机构及投资风 格。一只 ETF
+      产品涵盖广泛的资产类别、行业领域、发行人及投资风 格。一只 ETF
       产品可能同时归属于多重主题类别；例如，一只名称为 “嘉实中证机器人
       ETF”（产品代码：159526）的主题类 ETF 产品，
       可同时归类为资产类型为““股票”，行业类型为“工业”，市值风格为
@@ -306,20 +320,45 @@ const columnClick = (row: any, prop: string) => {
         }"
         :cell-style="{ fontSize: '1rem', padding: '0.7rem' }"
       >
-        <el-table-column
-          v-for="col in table.currentColumns"
-          :key="col.prop"
-          :prop="col.prop"
-          :label="col.label"
-        >
-          <template #default="scope">
-            <span
-              class="etf-issuer"
-              @click="columnClick(scope.row, col.prop)"
-              >{{ formatValue(scope.row[col.prop]) }}</span
-            >
-          </template>
-        </el-table-column>
+        <template v-if="table.value === 'category'">
+          <el-table-column
+            v-for="col in table.currentColumns"
+            :key="col.prop"
+            :prop="col.prop"
+            :label="col.label">
+            <template #default="scope">
+              <template v-if="col.prop === 'category'">
+                <span
+                  class="etf-issuer"
+                  @click="columnClick(scope.row, col.prop)">
+                  {{ categoryList.find(item => item.value === scope.row[col.prop])?.label }}
+                </span>
+              </template>
+              <template v-else>
+                <span
+                  class="etf-issuer"
+                  @click="columnClick(scope.row, col.prop)">
+                  {{ formatValue(scope.row[col.prop], col?.unit) }}
+                </span>
+              </template>
+            </template>
+          </el-table-column>
+        </template>
+        <template v-else>
+          <el-table-column
+            v-for="col in table.currentColumns"
+            :key="col.prop"
+            :prop="col.prop"
+            :label="col.label">
+            <template #default="scope">
+              <span
+                class="etf-issuer"
+                @click="columnClick(scope.row, col.prop)"
+                >{{ formatValue(scope.row[col.prop], col?.unit) }}</span
+              >
+            </template>
+          </el-table-column>
+        </template>
       </el-table>
       <div
         v-if="table.data.length > 3"

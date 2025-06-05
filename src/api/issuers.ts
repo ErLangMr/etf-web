@@ -23,3 +23,7 @@ export const getIssuerExpenseApi = () => {
 export const getIssuerDividendApi = () => {
   return get('/api/funds/byIssuer/getDividend')
 }
+
+export const getIssuerNetInflowApi = (params: any) => {
+  return get('/api/funds/by-code/net-inflow/four', params)
+}

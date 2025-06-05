@@ -26,7 +26,7 @@ const filterTabs = ref([
   { label: "收益", value: "returns" },
   { label: "资金流动", value: "fundFlows" },
   { label: "费用", value: "expenses" },
-  { label: "ESG", value: "esg", icon: true },
+  { label: "ESG", value: "esg" },
   { label: "分红", value: "dividends" },
   { label: "风险指标", value: "risk" },
   { label: "持仓特征", value: "holdings" },
@@ -36,40 +36,48 @@ const filterTabs = ref([
   // { label: "实时评级", value: "realtimeRatings" },
 ]);
 
-const tableColumnList = ref(
+interface TableColumn {
+  prop: string;
+  label: string;
+  type?: string;
+  url?: string | undefined;
+  unit?: string; // 可根据需要扩展单位类型
+}
+
+const tableColumnList = ref<Record<string, TableColumn[]>>(
   {
     overview: [
       { prop: "code", label: "ETF代码" },
       { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
       { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
       { prop: "category", label: "资产类型" },
-      { prop: "totalMarketValue", label: "ETF规模" },
-      { prop: "ytdPriceChange", label: "今年以来价格变化" },
-      { prop: "avgDailyVolume", label: "日均交易量" },
-      { prop: "preClose", label: "前收盘价" }
+      { prop: "totalMarketValue", label: "ETF规模(百万元)", unit: "million" },
+      { prop: "ytdPriceChange", label: "今年以来价格变化(%)" },
+      { prop: "avgDailyVolume", label: "日均交易量(百万股)", unit: "million" },
+      { prop: "preClose", label: "前收盘价(元)" }
     ],
     returns: [
       { prop: "code", label: "ETF代码" },
       { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
       { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
-      { prop: "weeklyReturns", label: "近1周回报" },
-      { prop: "totalMarketValue", label: "近1月回报" },
-      { prop: "ytdReturns", label: "今年以来回报" },
-      { prop: "yearlyReturns", label: "近1年回报" },
-      { prop: "threeYearReturns", label: "近3年回报" },
-      { prop: "fiveYearReturns", label: "近5年回报" },
+      { prop: "weeklyReturns", label: "近1周回报(%)" },
+      { prop: "monthlyReturns", label: "近1月回报(%)" },
+      { prop: "ytdReturns", label: "今年以来回报(%)" },
+      { prop: "yearlyReturns", label: "近1年回报(%)" },
+      { prop: "threeYearReturns", label: "近3年回报(%)" },
+      { prop: "fiveYearReturns", label: "近5年回报(%)" },
       // { prop: "preClose", label: "回报排名" },
     ],
     fundFlows: [
       { prop: "code", label: "ETF代码" },
       { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
       { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
-      { prop: "weeklyNetInflows", label: "近1周净流入额" },
-      { prop: "monthlyNetInflows", label: "近1月净流入额" },
-      { prop: "threeMonthNetInflows", label: "近3月净流入额" },
-      { prop: "ytdNetInflows", label: "今年以来净流入额" },
-      { prop: "yearlyNetInflows", label: "近1年净流入额" },
-      { prop: "threeYearNetInflows", label: "近3年净流入额" },
+      { prop: "weeklyNetInflows", label: "近1周净流入额(百万元)", unit: "million" },
+      { prop: "monthlyNetInflows", label: "近1月净流入额(百万元)", unit: "million" },
+      { prop: "threeMonthNetInflows", label: "近3月净流入额(百万元)", unit: "million" },
+      { prop: "ytdNetInflows", label: "今年以来净流入额(百万元)", unit: "million" },
+      { prop: "yearlyNetInflows", label: "近1年净流入额(百万元)", unit: "million" },
+      { prop: "threeYearNetInflows", label: "近3年净流入额(百万元)", unit: "million" },
       // { prop: "fiveYearNetInflows", label: "近5年净流入额" },
     ],
     expenses: [
@@ -77,11 +85,11 @@ const tableColumnList = ref(
       { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
       { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
       { prop: "category", label: "资产类型" },
-      { prop: "totalMarketValue", label: "ETF规模" },
-      { prop: "managementFee", label: "管理费率" },
-      { prop: "custodyFee", label: "托管费率" },
-      { prop: "serviceFee", label: "销售服务费率" },
-      { prop: "indexLicenseFee", label: "指数使用费率" },
+      { prop: "totalMarketValue", label: "ETF规模(百万元)", unit: "million" },
+      { prop: "managementFee", label: "管理费率(%)" },
+      { prop: "custodyFee", label: "托管费率(%)" },
+      { prop: "serviceFee", label: "销售服务费率(%)" },
+      { prop: "indexLicenseFee", label: "指数使用费率(%)" },
     ],
     esg: [
       { prop: "code", label: "ETF代码" },
@@ -97,22 +105,23 @@ const tableColumnList = ref(
       { prop: "code", label: "ETF代码" },
       { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
       { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
-      { prop: "divPerUnit", label: "单位年度分红" },
-      { prop: "accDivPerUnit", label: "单位累计分红" },
-      { prop: "divTimes", label: "年度分红次数" },
-      { prop: "divYield", label: "单位分红率" }
+      { prop: "divPerUnit", label: "单位年度分红(元)" },
+      { prop: "accDivPerUnit", label: "单位累计分红(元)" },
+      { prop: "divTimes", label: "年度分红次数(次)" },
+      { prop: "divYield", label: "单位分红率(%)" }
     ],
     risk: [
       { prop: "code", label: "ETF代码" },
       { prop: "shortName", label: "ETF简称", type: "link", url: "/details" },
       { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
-      { prop: "std52Week", label: "收益标准差" },
-      { prop: "市盈率P/E", label: "市盈率P/E" },
+      { prop: "std52Week", label: "收益标准差(%)" },
+      // { prop: "市盈率P/E", label: "市盈率P/E" },
       { prop: "beta52Week", label: "Beta" },
-      { prop: "volatility20Day", label: "近一月年化波动率" },
-      { prop: "volatility50Day", label: "近三月年化波动率" },
-      { prop: "volatility200Day", label: "近一年年化波动率" },
-      { prop: "maxDownSide", label: "最大回撤" },
+      { prop: "volatility20Day", label: "近一月年化波动率(%)" },
+      { prop: "volatility50Day", label: "近三月年化波动率(%)" },
+      { prop: "volatility200Day", label: "近一年年化波动率(%)" },
+      { prop: "maxDownSide", label: "最大回撤(%)" },
+      { prop: "trakingError", label: "跟踪误差(%)" },
     ],
     holdings: [
       { prop: "code", label: "ETF代码" },
@@ -120,9 +129,10 @@ const tableColumnList = ref(
       { prop: "fullName", label: "ETF全称", type: "link", url: "/details" },
       { prop: "fundMgrs", label: "发行人" },
       { prop: "stockHoldings", label: "持有股票个数" },
-      { prop: "top10Concentration", label: "前十大持仓集中度" },
-      { prop: "top15Concentration", label: "前十五大持仓集中度" },
-      { prop: "top50Concentration", label: "前五十大持仓集中度" },
+      { prop: "top5Concentration", label: "前五大持仓集中度(%)" },
+      { prop: "top10Concentration", label: "前十大持仓集中度(%)" },
+      { prop: "top15Concentration", label: "前十五大持仓集中度(%)" },
+      { prop: "top50Concentration", label: "前五十大持仓集中度(%)" },
       // { prop: "category", label: "全部持仓明细" },
       // { prop: "category", label: "持仓集中度排名" },
     ],
@@ -135,6 +145,13 @@ const tableColumnList = ref(
     ]
   }
 )
+const categoryList = ref([
+  { label: "股票", value: "EQUITY" },
+  { label: "债券", value: "BOND" },
+  { label: "商品", value: "GOODS" },
+  { label: "货币", value: "CURRENCY" },
+  { label: "跨境", value: "CROSS_BOUNDARY" },
+])
 const tableColumns = computed(() => {
   return tableColumnList.value[activeTab.value as keyof typeof tableColumnList.value] || []
 })
@@ -166,9 +183,9 @@ const toggleExpand = (symbol: string) => {
           @click="handleTabClick(tab.value)"
         >
           {{ tab.label }}
-          <el-tooltip v-if="tab.icon" content="ESG 说明" placement="top">
+          <!-- <el-tooltip v-if="tab?.icon" content="ESG 说明" placement="top">
             <el-icon style="font-size:14px;margin-left:2px;"><QuestionFilled /></el-icon>
-          </el-tooltip>
+          </el-tooltip> -->
         </div>
       </div>
     </div>
@@ -184,16 +201,21 @@ const toggleExpand = (symbol: string) => {
           :label="column.label"
         >
           <template #default="scope">
-            <span
-              class="link-cell"
-              v-if="column.type === 'link'"
-              @click="handleJump(column.url, scope.row.code || '')"
-            >
-              {{ scope.row[column.prop] }}
-            </span>
-            <span v-else>
-              {{ formatValue(scope.row[column.prop]) }}
-            </span>
+            <template v-if="column.prop === 'category'">
+              {{ categoryList.find(item => item.value === scope.row[column.prop])?.label }}
+            </template>
+            <template v-else>
+              <span
+                class="link-cell"
+                v-if="column.type === 'link'"
+                @click="handleJump(column.url??'', scope.row.code || '')"
+              >
+                {{ scope.row[column.prop] }}
+              </span>
+              <span v-else>
+                {{ formatValue(scope.row[column.prop], column?.unit) }}
+              </span>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -220,11 +242,11 @@ const toggleExpand = (symbol: string) => {
                 <span
                   class="value linkStyle"
                   v-if="header.type === 'link'"
-                  @click="handleJump(header.url, etf.code)"
+                  @click="handleJump(header.url??'', etf.code)"
                   >{{ etf[header.prop as keyof typeof etf] }}</span
                 >
                 <span class="value" v-else>{{
-                  formatValue(etf[header.prop as keyof typeof etf])
+                  formatValue(etf[header.prop as keyof typeof etf], header?.unit)
                 }}</span>
               </div>
             </div>
@@ -241,11 +263,11 @@ const toggleExpand = (symbol: string) => {
               <span
                 class="value linkStyle"
                 v-if="header.type === 'link'"
-                @click="handleJump(header.url, etf.code)"
+                @click="handleJump(header.url??'', etf.code)"
                 >{{ etf[header.prop as keyof typeof etf] }}</span
               >
               <span class="value" v-else>{{
-                formatValue(etf[header.prop as keyof typeof etf])
+                formatValue(etf[header.prop as keyof typeof etf], header?.unit)
               }}</span>
             </div>
           </div>

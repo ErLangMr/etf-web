@@ -26,5 +26,8 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       'vue': 'vue/dist/vue.esm-bundler.js'
     },
-  }
+  },
+  build: {
+    chunkSizeWarningLimit: 1000,
+  },
 })

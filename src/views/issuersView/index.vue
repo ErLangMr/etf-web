@@ -16,11 +16,11 @@ const filterTabs = [
     columns: [
       { prop: 'issuer', label: '发行人',type:'link',url:'/proshares' },
       { prop: 'fundRank', label: '收入排名' },
-      { prop: 'dataValue', label: '发行人收入（元）' },
+      { prop: 'dataValue', label: '发行人收入（百万元）', unit: 'million' },
       { prop: 'eftSize', label: 'ETF数量',type:'link',url:'/proshares' },
     ],
     description: {
-      title: 'ETF发行商收入排行榜',
+      title: 'ETF发行人收入排行榜',
       desc: 'ETF发行人的排名基于其ETF业务的预估收入。ETF 发行人的预估收入是通过汇总所有发行人 ETF 的预估收入计算得出的。要计算单个ETF的预估收入，需要将资产管理规模(AUM)乘以该 ETF 的费用率。所有数值均以元为单位。'
     }
    },
@@ -28,11 +28,11 @@ const filterTabs = [
     columns: [
       { prop: 'issuer', label: '发行人',type:'link',url:'/proshares' },
       { prop: 'fundRank', label: '资金净流入排名' },
-      { prop: 'dataValue', label: '过去3个月资金净流入（元）' },
+      { prop: 'dataValue', label: '过去3个月资金净流入（百万元）', unit: 'million' },
       { prop: 'eftSize', label: 'ETF数量',type:'link',url:'/proshares' },
     ],
     description: {
-      title: 'ETF发行机构资金流向排行榜',
+      title: 'ETF发行人资金流向排行榜',
       desc: 'ETF发行人排名基于其 3 个月总资金流。3 个月资金流是一个指标，可用于衡量不同ETF发行人在投资者中的受欢迎程度。所有数值均以元为单位'
     }
    },
@@ -52,7 +52,7 @@ const filterTabs = [
     columns: [
       { prop: 'issuer', label: '发行人',type:'link',url:'/proshares' },
       { prop: 'fundRank', label: '规模排名' },
-      { prop: 'dataValue', label: '资产规模（元）' },
+      { prop: 'dataValue', label: '资产规模（百万元）', unit: 'million' },
       { prop: 'eftSize', label: 'ETF数量',type:'link',url:'/proshares' },
     ],
     description: {
@@ -75,7 +75,7 @@ const filterTabs = [
   { label: '分红', value: 'Dividends',
     columns: [
       { prop: 'issuer', label: '发行人',type:'link',url:'/proshares' },
-      { prop: 'Revenue Rank', label: '分红率排名' },
+      { prop: 'fundRank', label: '分红率排名' },
       { prop: 'dataValue', label: '平均分红率（%）' },
       { prop: 'eftSize', label: 'ETF数量',type:'link',url:'/proshares' },
     ],
@@ -146,11 +146,11 @@ const columnClick = (row: any, prop: string) => {
     <div class="issuers-header">
       <h1 class="issuers-title">所有ETF发行人</h1>
       <p class="issuers-desc">
-        ETF 由ETF发行机构发行或推出。市场上有很多ETF发行机构。完整的发行机构列表如下。
+        ETF 由ETF发行人发行或推出。市场上有很多ETF发行人。完整的发行人列表如下。
       </p>
     </div>
     <div class="issuers-header">
-      <h1 class="issuers-title" style="margin-top: 3rem;">ETF发行商排行榜</h1>
+      <h1 class="issuers-title" style="margin-top: 3rem;">ETF发行人排行榜</h1>
       <p class="issuers-desc">
         发行人排行榜是根据某些投资相关指标对ETF发行人进行排名，这些指标包括预计收入、3个月资金流量、3个月回报率、资产管理规模 (AUM)、平均ETF费用和平均股息收益率。该指标计算基于上市的ETF，每只ETF都有一个发行人。如果发行人更改其ETF，也会反映在投资指标计算中
       </p>
@@ -194,13 +194,13 @@ const columnClick = (row: any, prop: string) => {
           <template #default="scope">
             <span
               v-if="col.type !== 'link'"
-              >{{ formatValue(scope.row[col.prop]) }}</span
+              >{{ formatValue(scope.row[col.prop], col?.unit) }}</span
             >
             <span
             class="link-cell"
             v-if="col.type === 'link'"
             @click="columnClick(scope.row, col.prop)"
-            >{{ formatValue(scope.row[col.prop]) }}</span
+            >{{ formatValue(scope.row[col.prop], col?.unit) }}</span
             >
           </template>
         </el-table-column>

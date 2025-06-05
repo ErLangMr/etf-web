@@ -1,7 +1,7 @@
 <template>
   <div class="proshares-container">
     <div class="proshares-header">
-      <h1 class="proshares-title">ProShares ETF List</h1>
+      <h1 class="proshares-title">{{ issue.issuer }} ETF</h1>
     </div>
     <div class="proshares-main-box">
       <div class="proshares-content">
@@ -10,18 +10,18 @@
         </div>
         <div class="proshares-info-img">
           <div class="info-row">
-            <div class="info-value">$79.01</div>
+            <div class="info-value">{{formatValue(chartDetail.totalAssets, 'million')}}</div>
             <div class="info-label">
-              Total Assets<br /><span class="info-unit">($B)</span>
+              总资产<br /><span class="info-unit">(百万元)</span>
             </div>
           </div>
           <div class="info-row">
-            <div class="info-value">146</div>
-            <div class="info-label">U.S. Listed ETFs</div>
+            <div class="info-value">{{chartDetail.totalNumber}}</div>
+            <div class="info-label">ETF数量</div>
           </div>
           <div class="info-row">
-            <div class="info-value">0.09% - 2.99%</div>
-            <div class="info-label">Expense Ratio Range</div>
+            <div class="info-value">{{chartDetail.feeMin}}% - {{chartDetail.feeMax}}%</div>
+            <div class="info-label">管理费率范围</div>
           </div>
         </div>
       </div>
@@ -55,6 +55,8 @@ import * as echarts from "echarts";
 import { useRoute } from "vue-router";
 import { getFilterTableApi } from "@/api/filterTable";
 import { useDevice } from "@/utils/device";
+import { getIssuerNetInflowApi } from "@/api/issuers";
+import { formatValue } from '@/utils/formatValue'
 
 const route = useRoute();
 const issue = JSON.parse(route.query.issuer as string || '{}');
@@ -63,6 +65,29 @@ const { isMobile } = useDevice();
 const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
+
+let xAxisData: (string | number)[] = [];
+let yAxisData: (number | string)[] = [];
+const chartDetail = ref({
+  totalAssets: 0,
+  totalNumber: 0,
+  feeMin: 0,
+  feeMax: 0,
+});
+function getNetInflowData() {
+  getIssuerNetInflowApi({
+    mgr: issue.issuer,
+  }).then((res: any) => {
+    console.log(res);
+    xAxisData = res.x;
+    yAxisData = res.y;
+    chartDetail.value.totalAssets = res.totalAssets;
+    chartDetail.value.totalNumber = res.totalNumber;
+    chartDetail.value.feeMin = res.feeMin;
+    chartDetail.value.feeMax = res.feeMax;
+    initChart();
+  });
+}
 const getFilterTableData = async () => {
   const res: any = await getFilterTableApi({
     page: page.value,
@@ -81,8 +106,8 @@ const handlePageChange = (newPage: number) => {
 let myChart: any = null;
 
 onMounted(() => {
-  initChart();
   getFilterTableData();
+  getNetInflowData();
 });
 
 onUnmounted(() => {
@@ -93,17 +118,17 @@ onUnmounted(() => {
   }
 });
 const etfList = ref<any[]>([]);
-function getRecentDates(days: number) {
-  const arr = [];
-  const today = new Date("2025-05-16");
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    arr.push(d.toISOString().slice(0, 10));
-  }
-  return arr;
-}
-const xAxisData = getRecentDates(15);
+// function getRecentDates(days: number) {
+//   const arr = [];
+//   const today = new Date("2025-05-16");
+//   for (let i = days - 1; i >= 0; i--) {
+//     const d = new Date(today);
+//     d.setDate(today.getDate() - i);
+//     arr.push(d.toISOString().slice(0, 10));
+//   }
+//   return arr;
+// }
+// const xAxisData = getRecentDates(15);
 
 function resizeChart() {
   if (myChart) {
@@ -148,17 +173,17 @@ function initChart() {
     yAxis: {
       type: "value",
       position: "right",
-      min: -1,
-      max: 0.5,
+      // min: -1,
+      // max: 0.5,
       splitLine: { show: true },
       axisLabel: {
-        formatter: function (value: any) {
-          if (value === 0.5) return "0.5 B";
-          if (value === 0) return "0 B";
-          if (value === -0.5) return "-0.5 B";
-          if (value === -1) return "-1 B";
-          return "";
-        },
+        // formatter: function (value: any) {
+        //   if (value === 0.5) return "0.5 B";
+        //   if (value === 0) return "0 B";
+        //   if (value === -0.5) return "-0.5 B";
+        //   if (value === -1) return "-1 B";
+        //   return "";
+        // },
         color: "#222",
         fontWeight: 500,
         fontSize: 13,
@@ -167,10 +192,7 @@ function initChart() {
     series: [
       {
         type: "bar",
-        data: [
-          0.3, -0.5, 0.4, -0.7, 0.2, -0.6, -0.4, -0.3, 0.1, -0.2, 0.5, 0.2, 0.1,
-          0.05, -0.05,
-        ],
+        data: yAxisData,
         itemStyle: {
           color: function (params: any) {
             return params.value >= 0 ? "#2ca02c" : "#d62728";

@@ -23,7 +23,7 @@ const cards = [
     path: '/tool'
   },
   {
-    title: 'ETF（按发行人分类）',
+    title: 'ETF发行人',
     desc: '使用我们的数据库工具可以快速轻松地查找由 70 多个不同发行人发行的 ETF。',
     icon: OfficeBuilding,
     path: '/issuers'

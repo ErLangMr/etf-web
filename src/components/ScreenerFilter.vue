@@ -470,6 +470,12 @@ const filterData = [
         range: [0, 1000000],
       },
       {
+        label: "前五大持仓占比(%)",
+        type: "slider",
+        paramKeys: ["top5ConcentrationStart", "top5ConcentrationEnd"],
+        range: [0, 100],
+      },
+      {
         label: "前十大持仓占比(%)",
         type: "slider",
         paramKeys: ["top10ConcentrationStart", "top10ConcentrationEnd"],
