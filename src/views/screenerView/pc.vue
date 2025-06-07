@@ -226,14 +226,14 @@ onMounted(() => {
 .mobile-filter-btn {
   display: none;
   position: fixed;
-  top: 95px;
+  top: 85px;
   right: calc(50% - 45px);
   z-index: 1001;
   background: var(--theme-purple);
   border: 1px solid var(--theme-purple);
   border-radius: 4px;
   padding: 5px 20px;
-  font-size: 18px;
+  font-size: var(--font-size-medium);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   color: #fff;
   svg {
@@ -269,7 +269,7 @@ onMounted(() => {
   justify-content: flex-start;
   align-items: center;
   padding: 18px 20px 12px 20px;
-  font-size: 22px;
+  font-size: var(--font-size-large);
   font-weight: 600;
   border-bottom: 1px solid #eee;
   background: #fff;
@@ -284,7 +284,7 @@ onMounted(() => {
     border: 1px solid #ddd;
     color: #888;
     cursor: pointer;
-    font-size: 14px;
+    font-size: var(--font-size-base);
     padding: 4px 12px;
     border-radius: 5px;
     transition: background 0.2s;

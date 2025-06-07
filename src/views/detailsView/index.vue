@@ -16,8 +16,7 @@
       </div>
       <div>
         <span class="details-info-label">类型:</span>
-        <span class="linkStyle" @click.stop="router.push('/equities')"
-         >{{ detailsTitle.category }}</span>
+        <span >{{ detailsTitle.category }}</span>
       </div>
       <div>
         <span class="details-info-label">最近更新日期:</span>
@@ -228,6 +227,7 @@ const tabList = ref([
         width: 150px;
         height: 50px;
         white-space: wrap;
+        font-size: var(--font-size-medium);
       }
       :deep(.el-tabs__item.is-active) {
         position: relative;

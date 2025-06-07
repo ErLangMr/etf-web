@@ -23,8 +23,8 @@
               >
             </div>
             <div class="info-row">
-              <span>费用率</span>
-              <span>{{ props.detailsData?.fundInfoByVitals?.fee }}</span>
+              <span>费用率(%)</span>
+              <span>{{ formatValue(props.detailsData?.fundInfoByVitals?.fee, 'percent') }}</span>
             </div>
             <div class="info-row">
               <span>基金成立日</span>
@@ -64,25 +64,25 @@
           <div class="info-list">
             <div class="info-row">
               <span>资产类型</span
-              ><span class="link" @click="router.push('/equities')">
-                {{ props.detailsData?.fundInfoByThemes?.category }}
+              ><span>
+                {{ categoryList.find(item => item.value === props.detailsData?.fundInfoByThemes?.category)?.label }}
               </span>
             </div>
             <div class="info-row">
               <span>风格属性</span
-              ><span class="link" @click="router.push('/etfs-list')">
+              ><span>
                 {{ props.detailsData?.fundInfoByThemes?.styleAttribute }}
               </span>
             </div>
             <div class="info-row">
               <span>市值属性</span
-              ><span class="link" @click="router.push('/etfs-list')">
+              ><span>
                 {{ props.detailsData?.fundInfoByThemes?.compMarketCap }}
               </span>
             </div>
             <div class="info-row">
               <span>市值-风格属性</span
-              ><span class="link" @click="router.push('/etfs-list')">
+              ><span>
                 {{ props.detailsData?.fundInfoByThemes?.investStrategy }}
               </span>
             </div>
@@ -162,9 +162,9 @@
               </span>
             </div>
             <div class="info-row">
-              <span>成交额</span
+              <span>成交额(百万元)</span
               ><span>
-                {{ formatValue(props.detailsData?.fundInfoByTrading?.amount) }}
+                {{ formatValue(props.detailsData?.fundInfoByTrading?.amount, 'million') }}
               </span>
             </div>
             <div class="info-row">
@@ -200,11 +200,12 @@
               </span>
             </div>
             <div class="info-row">
-              <span>基金规模</span
+              <span>基金规模(百万元)</span
               ><span>
                 {{
                   formatValue(
-                    props.detailsData?.fundInfoByTrading?.totalMarketValue
+                    props.detailsData?.fundInfoByTrading?.totalMarketValue,
+                    'million'
                   )
                 }}
               </span>
@@ -212,7 +213,7 @@
             <div class="info-row">
               <span>基金份额</span
               ><span>
-                {{ props.detailsData?.fundInfoByTrading?.unitTotal }}
+                {{ formatValue(props.detailsData?.fundInfoByTrading?.unitTotal) }}
               </span>
             </div>
           </div>
@@ -221,22 +222,24 @@
           <div class="section-title">历史交易数据</div>
           <div class="info-list">
             <div class="info-row">
-              <span>过去 1 个月日均成交额</span>
+              <span>过去 1 个月日均成交额(百万元)</span>
               <span>
                 {{
                   formatValue(
                     props.detailsData?.fundInfoByHistorical
-                      ?.avgDailyVolumeForMoth
+                      ?.avgDailyVolumeForMoth,
+                      'million'
                   )
                 }}
               </span>
             </div>
             <div class="info-row">
-              <span>过去 3 个月日均成交额</span
+              <span>过去 3 个月日均成交额(百万元)</span
               ><span>
                 {{
                   formatValue(
-                    props.detailsData?.fundInfoByHistorical?.avgDailyVolume
+                    props.detailsData?.fundInfoByHistorical?.avgDailyVolume,
+                    'million'
                   )
                 }}
               </span>
@@ -338,6 +341,14 @@ const props = defineProps({
   },
 });
 
+const categoryList = ref([
+  { label: "股票", value: "EQUITY" },
+  { label: "债券", value: "BOND" },
+  { label: "商品", value: "GOODS" },
+  { label: "货币", value: "CURRENCY" },
+  { label: "跨境", value: "CROSS_BOUNDARY" },
+])
+
 function clickVitals(data: any) {
   router.push({
     path: '/proshares',
@@ -389,10 +400,10 @@ const columns = [
     //   router.push(`/details?symbol=${symbol}`);
     // },
   },
-  { key: "fee", label: "费用率" },
-  { key: "totalMarketValue", label: "基金规模" },
-  { key: "avgDailyVolumeForYear", label: "日均成交额" },
-  { key: "ytdReturns", label: "年初至今回报" },
+  { key: "fee", label: "费用率(%)" },
+  { key: "totalMarketValue", label: "基金规模(百万元)",unit: 'million' },
+  { key: "avgDailyVolumeForYear", label: "日均成交额(百万元)",unit: 'million' },
+  { key: "ytdReturns", label: "年初至今回报(%)" },
 ];
 
 const tableData = ref<Record<string, any>[]>([]);
@@ -402,7 +413,7 @@ const tableData = ref<Record<string, any>[]>([]);
 .stock-profile-price {
   background: #fff;
   color: #222;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 .stock-profile-price-container {
   display: flex;
@@ -419,7 +430,7 @@ const tableData = ref<Record<string, any>[]>([]);
 }
 .section-title {
   font-weight: 600;
-  font-size: 16px;
+  font-size: var(--font-size-base);
   margin-bottom: 10px;
   color: #222;
   display: flex;
@@ -443,7 +454,7 @@ const tableData = ref<Record<string, any>[]>([]);
   align-items: center;
   padding: 7px 0;
   border-bottom: 1px solid #ececec;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 .info-row:last-child {
   border-bottom: none;
@@ -466,7 +477,7 @@ const tableData = ref<Record<string, any>[]>([]);
   border-radius: 6px;
   padding: 7px 18px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   cursor: pointer;
   transition: background 0.2s;
   margin-left: 10px;
@@ -476,7 +487,7 @@ const tableData = ref<Record<string, any>[]>([]);
 }
 .analyst-content {
   color: #444;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: 1.7;
   margin-bottom: 4px;
 }
@@ -484,7 +495,7 @@ const tableData = ref<Record<string, any>[]>([]);
   color: var(--theme-purple);
   cursor: pointer;
   margin-left: 6px;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 @media (max-width: 768px) {
   .row {

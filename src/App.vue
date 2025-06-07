@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { Search, Menu } from '@element-plus/icons-vue'
 import { useDevice } from '@/utils/device'
@@ -22,6 +22,8 @@ const handleSearch = (item: Record<string, any>) => {
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
+
+const router = useRouter()
 </script>
 
 <template>
@@ -29,12 +31,12 @@ const toggleMenu = () => {
     <header class="header">
       <div class="header-content">
         <div class="left-section">
-          <div class="logo">
-            <img src="@/assets/VettaFi.svg" alt="Logo" />
+          <div class="logo" @click="router.push('/')">
+            <img src="@/assets/logo.png" alt="Logo" />
           </div>
           <nav class="nav desktop-nav" v-if="!isMobile()">
             <RouterLink to="/etfs" class="nav-item">ETF分类排行</RouterLink>
-            <RouterLink to="/tool" class="nav-item">ETF投资地域</RouterLink>
+            <RouterLink to="/tool" class="nav-item">ETF跟踪指数</RouterLink>
             <RouterLink to="/issuers" class="nav-item">ETF发行人</RouterLink>
             <RouterLink to="/screener" class="nav-item">ETF筛选器</RouterLink>
           </nav>
@@ -132,7 +134,7 @@ const toggleMenu = () => {
 
 .header-content {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 0 $spacing-base;
   height: $header-height;
@@ -162,6 +164,7 @@ const toggleMenu = () => {
   height: 40px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   @include mobile {
     height: 32px;
@@ -182,7 +185,7 @@ const toggleMenu = () => {
 .nav-item {
   color: $text-primary;
   text-decoration: none;
-  font-size: 16px;
+  font-size: var(--font-size-medium);
   font-weight: 500;
   transition: color $transition-duration;
 
@@ -219,7 +222,7 @@ const toggleMenu = () => {
 .main {
   flex: 1;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
   margin-top: $header-height;
   background: $background-color-white;

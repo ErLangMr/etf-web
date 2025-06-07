@@ -44,7 +44,7 @@ const generateBreadcrumbs = () => {
   const currentItem = {
     path: currentPath,
     title: currentTitle,
-    query: route.query?.code ? { code: route.query.code } : {}
+    query: route.query?.code ? { code: route.query.code } : route.query?.issuer ? { issuer: route.query.issuer } : {}
   }
 
   // 检查是否已经在历史记录中
@@ -65,12 +65,12 @@ const generateBreadcrumbs = () => {
     ]
   }
 
-  // 限制面包屑数量，最多显示5个
-  if (breadcrumbs.value.length > 5) {
+  // 限制面包屑数量，最多显示4个
+  if (breadcrumbs.value.length > 4) {
     breadcrumbs.value = [
       breadcrumbs.value[0], // 保留首页
       { path: '...', title: '...' }, // 添加省略号
-      ...breadcrumbs.value.slice(-3) // 保留最后3个
+      ...breadcrumbs.value.slice(-2) // 保留最后3个
     ]
   }
 
@@ -125,7 +125,8 @@ const isHome = (path: string) => path === '/'
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+
 .breadcrumb-container {
   padding: 12px 24px;
   background-color: #fff;
@@ -134,7 +135,7 @@ const isHome = (path: string) => path === '/'
 }
 
 .el-breadcrumb {
-  font-size: 14px;
+  font-size: var(--font-size-medium);
 
   :deep(.el-breadcrumb__item) {
     cursor: pointer;
@@ -177,7 +178,7 @@ const isHome = (path: string) => path === '/'
 }
 
 .breadcrumb-icon {
-  font-size: 18px;
+  font-size: var(--font-size-large);
   margin-right: 4px;
   color: var(--el-text-color-regular);
   transition: all 0.3s ease;

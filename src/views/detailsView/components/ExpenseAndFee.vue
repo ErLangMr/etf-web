@@ -47,26 +47,26 @@ const data = ref([
 .expense-and-fee {
   background: #fff;
   .section-title {
-    font-size: 24px;
+    font-size: var(--font-size-title);
     font-weight: 600;
     color: #333;
     margin-bottom: 10px;
   }
   .description {
-    font-size: 14px;
+    font-size: var(--font-size-base);
     color: #333;
     margin-bottom: 20px;
   }
   .expense-and-fee-container {
     .quick-facts {
       .quick-facts-title {
-        font-size: 18px;
+        font-size: var(--font-size-large);
         margin-bottom: 10px;
       }
     }
     .block {
       .section-title {
-        font-size: 18px;
+        font-size: var(--font-size-large);
         margin-bottom: 10px;
       }
       .info-list {
@@ -81,7 +81,7 @@ const data = ref([
         align-items: center;
         padding: 7px 0;
         border-top: 1px solid #ececec;
-        font-size: 14px;
+        font-size: var(--font-size-base);
       }
       .info-row:last-child {
         border-bottom: none;

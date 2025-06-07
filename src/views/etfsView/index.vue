@@ -275,7 +275,7 @@ const categoryList = ref([
 
 <template>
   <div class="etf-directory-container">
-    <h1 class="etf-title">ETF 目录</h1>
+    <h1>ETF 目录</h1>
     <p class="etf-desc">
       随着 ETF 领域的持续拓展，可利用下方表格筛选感兴趣的 ETF 主题 范围。ETF
       产品涵盖广泛的资产类别、行业领域、发行人及投资风 格。一只 ETF

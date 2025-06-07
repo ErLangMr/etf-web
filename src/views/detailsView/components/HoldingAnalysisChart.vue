@@ -63,7 +63,7 @@ const sectorData = ref([
   height: 100%;
   background: #fff;
   .h3 {
-    font-size: 24px;
+    font-size: var(--font-size-title);
   }
   .chart-item {
     padding-bottom: 20px;

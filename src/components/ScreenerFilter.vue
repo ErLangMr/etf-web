@@ -928,7 +928,7 @@ function handleRangeInputChange(
     align-items: center;
     justify-content: space-between;
     h2 {
-      font-size: 20px;
+      font-size: var(--font-size-extra-large);
       margin: 0;
       font-weight: 600;
     }
@@ -938,7 +938,7 @@ function handleRangeInputChange(
       border: 1px solid #ddd;
       color: #888;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--font-size-base);
       padding: 4px 12px;
       border-radius: 5px;
       transition: background 0.2s;
@@ -970,7 +970,7 @@ function handleRangeInputChange(
       margin-bottom: 8px;
       .alt-title {
         font-weight: 600;
-        font-size: 15px;
+        font-size: var(--font-size-base);
         margin-bottom: 4px;
         color: #333;
       }
@@ -981,7 +981,7 @@ function handleRangeInputChange(
         padding: 6px 0;
         .van-checkbox {
           flex: 1;
-          font-size: 14px;
+          font-size: var(--font-size-base);
           color: #222;
         }
       }
@@ -995,7 +995,7 @@ function handleRangeInputChange(
     height: 18px;
     padding: 0 6px;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: var(--font-size-base);
     font-weight: 600;
     background-color: #80b600;
     color: #fff;
@@ -1027,7 +1027,7 @@ function handleRangeInputChange(
     background: #f5f5f5;
     border-radius: 0;
     font-weight: 500;
-    font-size: 15px;
+    font-size: var(--font-size-base);
     color: #222;
     border-bottom: 1px solid #e0e0e0;
     padding: 0 16px;
@@ -1056,7 +1056,7 @@ function handleRangeInputChange(
     .range-label {
       margin-bottom: 8px;
       color: #333;
-      font-size: 14px;
+      font-size: var(--font-size-base);
     }
 
     .range-inputs {

@@ -60,6 +60,7 @@ import { formatValue } from '@/utils/formatValue'
 
 const route = useRoute();
 const issue = JSON.parse(route.query.issuer as string || '{}');
+console.log(issue, 111);
 const { isMobile } = useDevice();
 
 const page = ref(1)
@@ -76,9 +77,8 @@ const chartDetail = ref({
 });
 function getNetInflowData() {
   getIssuerNetInflowApi({
-    mgr: issue.issuer,
+    mgr: issue.issuer || issue.fundMgrs,
   }).then((res: any) => {
-    console.log(res);
     xAxisData = res.x;
     yAxisData = res.y;
     chartDetail.value.totalAssets = res.totalAssets;

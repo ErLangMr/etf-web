@@ -144,7 +144,7 @@ const columnClick = (row: any, prop: string) => {
 <template>
   <div class="issuers-container">
     <div class="issuers-header">
-      <h1 class="issuers-title">所有ETF发行人</h1>
+      <h1>所有ETF发行人</h1>
       <p class="issuers-desc">
         ETF 由ETF发行人发行或推出。市场上有很多ETF发行人。完整的发行人列表如下。
       </p>

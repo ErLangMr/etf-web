@@ -9,12 +9,26 @@
 }
 :root {
   --theme-purple: #{$theme-purple};
+  --font-size-base: #{$font-size-base};
+  --font-size-small: #{$font-size-small};
+  --font-size-medium: #{$font-size-medium};
+  --font-size-large: #{$font-size-large};
+  --font-size-extra-large: #{$font-size-extra-large};
+  --font-size-title: #{$font-size-title};
+  @include mobile {
+    --font-size-base: #{$font-size-base-mobile};
+    --font-size-small: #{$font-size-small-mobile};
+    --font-size-medium: #{$font-size-medium-mobile};
+    --font-size-large: #{$font-size-large-mobile};
+    --font-size-extra-large: #{$font-size-extra-large-mobile};
+    --font-size-title: #{$font-size-title-mobile};
+  }
 }
 
 html, body {
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   line-height: 1.5;
   color: $text-primary;
   background-color: $background-color-base;
@@ -59,5 +73,12 @@ html, body {
   cursor: pointer;
   &:hover {
     text-decoration: underline!important;
+  }
+}
+
+.el-table {
+  font-size: var(--font-size-base)!important;
+  @include mobile {
+    font-size: var(--font-size-small)!important;
   }
 }

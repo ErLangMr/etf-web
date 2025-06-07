@@ -15,7 +15,7 @@
             class="link"
             @click="col.onClick ? col.onClick(row[col.key], row) : null"
           >{{ row[col.key] }}</span>
-          <span v-else>{{ formatValue(row[col.key]) }}</span>
+          <span v-else>{{ formatValue(row[col.key], col.unit) }}</span>
         </div>
       </div>
       </template>
@@ -34,7 +34,7 @@ import { formatValue } from "@/utils/formatValue";
 
 const props = defineProps<{
   title?: string
-  columns: Array<{ key: string, label: string, isLink?: boolean, onClick?: Function }>
+  columns: Array<{ key: string, label: string, isLink?: boolean, onClick?: Function, unit?: string }>
   data: Array<Record<string, any>>
 }>()
 const gridTemplateColumns = computed(() => {
@@ -48,7 +48,7 @@ const gridTemplateColumns = computed(() => {
 }
 .section-title {
   font-weight: 600;
-  font-size: 24px;
+  font-size: var(--font-size-title);
   margin-bottom: 10px;
   color: #333;
 }
@@ -56,13 +56,16 @@ const gridTemplateColumns = computed(() => {
   width: 100%;
   margin-top: 8px;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 .table-header, .table-row {
   display: grid;
   // grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
   // grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   align-items: center;
+  div {
+    padding: 0 10px;
+  }
 }
 .table-header {
   font-weight: 600;

@@ -65,7 +65,7 @@ const data = ref([
 <style scoped lang="scss">
 .holdings {
   .h4 {
-    font-size: 18px;
+    font-size: var(--font-size-large);
     margin-bottom: 10px;
   }
   .holdings-comparison {

@@ -54,6 +54,6 @@ const data = ref([
   background: #fff;
   padding: 0 20px;
   color: #333;
-  font-size: 14px;
+  font-size: var(--font-size-base);
 }
 </style>

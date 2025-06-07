@@ -227,7 +227,7 @@ const toggleExpand = (symbol: string) => {
       align-items: center;
       padding: 8px 12px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--font-size-base);
       border-bottom: 1px solid #f0f0f0;
       .symbol-divider {
         margin: 0 3px;
@@ -240,7 +240,7 @@ const toggleExpand = (symbol: string) => {
         white-space: nowrap;
       }
       .arrow {
-        font-size: 16px;
+        font-size: var(--font-size-medium);
         font-weight: 600;
         transition: transform 0.2s;
         color: var(--theme-purple);
@@ -254,7 +254,7 @@ const toggleExpand = (symbol: string) => {
       background: #f9f9fb;
       .etf-detail-item {
         display: flex;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         padding: 6px 0;
         justify-content: space-between;
         border-bottom: 1px solid #f0f0f0;
