@@ -53,7 +53,7 @@ const getFilterTableData = async () => {
   const obj = {
     page: page.value,
     pageSize: pageSize.value,
-    fundMgrs: issue.topFundMgr,
+    codes: issue.codes,
   }
   const res: any = await getFilterTableApi(obj);
   etfList.value = res.content
