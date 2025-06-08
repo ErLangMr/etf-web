@@ -16,7 +16,7 @@
       </div>
       <div>
         <span class="details-info-label">类型:</span>
-        <span >{{ detailsTitle.category }}</span>
+        <span >{{ categoryList.find((item) => item.value === detailsTitle.category)?.label }}</span>
       </div>
       <div>
         <span class="details-info-label">最近更新日期:</span>
@@ -94,6 +94,14 @@ const { isMobile } = useDevice();
 const activeName = ref("StockProfilePrice");
 const mobildSelect = ref('StockProfilePrice');
 const componentName = ref('StockProfilePrice');
+
+const categoryList = ref([
+  { label: "股票", value: "EQUITY" },
+  { label: "债券", value: "BOND" },
+  { label: "商品", value: "GOODS" },
+  { label: "货币", value: "CURRENCY" },
+  { label: "跨境", value: "CROSS_BOUNDARY" },
+])
 
 function handleChange(val: string) {
   const selectedTab = tabList.value.find(tab => tab.value === val);
@@ -269,7 +277,7 @@ const tabList = ref([
   }
   .tab-content {
     padding: 0 20px;
-    max-width: 750px;
+    max-width: 1300px;
   }
   @media (max-width: 768px) {
     .details-view{

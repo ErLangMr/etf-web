@@ -31,20 +31,20 @@ const tableList = ref([
     ],
     currentColumns: [] as TableColumn[]
   },
+  // {
+  //   title: "地区",
+  //   value: "region",
+  //   data: [],
+  //   originalColumns: [
+  //     { prop: "category", label: "地区名称", minWidth: "120" },
+  //   ],
+  // },
   {
-    title: "地区",
-    value: "region",
-    data: [],
-    originalColumns: [
-      { prop: "category", label: "地区名称", minWidth: "120" },
-    ],
-  },
-  {
-    title: "国家",
+    title: "投资区域",
     value: "investmentRegion",
     data: [],
     originalColumns: [
-      { prop: "category", label: "国家名称", minWidth: "120" },
+      { prop: "category", label: "区域名称", minWidth: "120" },
     ],
   },
   {
@@ -366,10 +366,10 @@ const categoryList = ref([
         @click="expanded[idx] = !expanded[idx]"
       >
         <template v-if="!expanded[idx]">
-          SHOW {{ table.data.length - 3 }} MORE {{ table.title }}
+          展开剩余 {{ table.data.length - 3 }} 个 {{ table.title }}
           <span class="arrow">▼</span>
         </template>
-        <template v-else> SHOW LESS <span class="arrow">▲</span> </template>
+        <template v-else> 收起 <span class="arrow">▲</span> </template>
       </div>
     </section>
   </div>

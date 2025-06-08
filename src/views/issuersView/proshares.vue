@@ -20,7 +20,7 @@
             <div class="info-label">ETF数量</div>
           </div>
           <div class="info-row">
-            <div class="info-value">{{chartDetail.feeMin}}% - {{chartDetail.feeMax}}%</div>
+            <div class="info-value">{{formatValue(chartDetail.feeMin)}}% - {{formatValue(chartDetail.feeMax) }}%</div>
             <div class="info-label">管理费率范围</div>
           </div>
         </div>
@@ -141,7 +141,7 @@ function initChart() {
   myChart = echarts.init(chartDom);
   const option = {
     title: {
-      text: "1 Month Fund Flows",
+      text: "近一月资金流动",
       left: "center",
       top: "bottom",
       textStyle: {

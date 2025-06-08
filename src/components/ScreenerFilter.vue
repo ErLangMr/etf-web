@@ -786,7 +786,7 @@ function handleRangeInputChange(
           </van-collapse>
         </template>
         <template v-if="filter.type === 'checkIssuer'">
-          <div class="range-list">
+          <div class="range-list checkIssuer-list">
             <div
               v-for="item in (filter.children as unknown as ApiResponseItem[])"
               :key="item.id"
@@ -963,6 +963,8 @@ function handleRangeInputChange(
   // 子项列表样式
   .children-list {
     padding: 8px 16px;
+    max-height: 300px;
+    overflow-y: auto;
   }
   .alt-list {
     padding: 8px 16px;
@@ -1042,9 +1044,12 @@ function handleRangeInputChange(
     padding: 0 0 8px 0;
   }
 
+  .checkIssuer-list{
+    max-height: 300px;
+    overflow-y: auto;
+  }
   .range-list {
     padding: 16px;
-
     .range-item {
       margin-bottom: 20px;
 

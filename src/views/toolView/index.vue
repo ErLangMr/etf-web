@@ -1,105 +1,47 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { getPopularIndicesApi } from "@/api/tool";
+import { formatValue } from "@/utils/formatValue";
+
 const router = useRouter();
-const indexList = [
-  {
-    title: "XXX大类",
-    children: [
-      {
-        title: "创业板人创业板人",
-        value: "2914.26",
-        rate: "6.38",
-        fundCount: 2,
-      },
-      {
-        title: "中韩半导创业板人",
-        value: "3584.51",
-        rate: "6.17",
-        fundCount: 2,
-      },
-      {
-        title: "恒生港股创业板人",
-        value: "2779.89",
-        rate: "6.02",
-        fundCount: 2,
-      },
-      {
-        title: "港股创新创业板人",
-        value: "1110.75",
-        rate: "5.92",
-        fundCount: 2,
-      },
-      {
-        title: "港股通创创业板人",
-        value: "886.51",
-        rate: "5.87",
-        fundCount: 2,
-      },
-      {
-        title: "港股通创创业板人",
-        value: "1741.45",
-        rate: "5.75",
-        fundCount: 4,
-      },
-      { title: "通信技术", value: "1054.05", rate: "5.62", fundCount: 2 },
-      { title: "通信设备", value: "6527.55", rate: "5.49", fundCount: 4 },
-      { title: "5G通信", value: "912.68", rate: "5.48", fundCount: 4 },
-      { title: "通信设备", value: "1589.04", rate: "5.17", fundCount: 4 },
-      {
-        title: "港股通医创业板人",
-        value: "2892.85",
-        rate: "4.59",
-        fundCount: 2,
-      },
-    ],
-  },
-  {
-    title: "XXX大类",
-    children: [
-      { title: "科技传媒", value: "1858.75", rate: "4.54", fundCount: 2 },
-      { title: "云计算", value: "4412.56", rate: "4.53", fundCount: 16 },
-      { title: "恒生生物", value: "12738.36", rate: "4.52", fundCount: 8 },
-      {
-        title: "SHS云计创业板人",
-        value: "2282.71",
-        rate: "4.43",
-        fundCount: 2,
-      },
-      {
-        title: "纳斯达克创业板人",
-        value: "4254.94",
-        rate: "4.31",
-        fundCount: 6,
-      },
-      { title: "动漫游戏", value: "1711.90", rate: "4.28", fundCount: 6 },
-      { title: "稀土产业", value: "1719.29", rate: "4.13", fundCount: 4 },
-      { title: "恒生医疗", value: "3313.32", rate: "4.11", fundCount: 4 },
-      { title: "CSSW电子", value: "3579.77", rate: "4.09", fundCount: 2 },
-    ],
-  },
-];
+const indexList = ref<any[]>([]);
 const filterTabs = [
   { label: '日涨幅', value: 'day', gray: false },
-  { label: '近1周', value: 'week', gray: false },
-  { label: '近1月', value: 'month', gray: false },
-  { label: '近3月', value: '3month', gray: false },
-  { label: '近6月', value: '6month', gray: false },
-  { label: '近1年', value: 'year', gray: false },
+  { label: '近1周', value: 'weekly', gray: false },
+  { label: '近1月', value: 'monthly', gray: false },
+  { label: '近3月', value: 'threeMonth', gray: false },
+  { label: '近6月', value: 'sixMonth', gray: false },
+  { label: '近1年', value: 'yearly', gray: false },
 ];
-const activeTab = ref('week');
+const activeTab = ref('weekly');
 const setActiveTab = (val: string) => {
   activeTab.value = val;
-  // 这里可以加数据切换逻辑
-};
-const handleCountryClick = (name: string) => {
-  router.push({
-    path: "/exposure",
-    query: {
-      country: name,
-    },
+  getPopularIndicesApi(activeTab.value).then((res) => {
+    indexList.value = res as any;
   });
 };
+const handleIndexClick = (item: any) => {
+  console.log(item, 111);
+    router.push({
+      path: "/tool-etf-list",
+      query: {
+        index: JSON.stringify(item),
+      },
+    });
+};
+const categoryList = ref([
+  { label: "股票", value: "EQUITY" },
+  { label: "债券", value: "BOND" },
+  { label: "商品", value: "GOODS" },
+  { label: "货币", value: "CURRENCY" },
+  { label: "跨境", value: "CROSS_BOUNDARY" },
+])
+onMounted(() => {
+  getPopularIndicesApi(activeTab.value).then((res) => {
+    indexList.value = res as any;
+  });
+});
 </script>
 
 <template>
@@ -122,29 +64,55 @@ const handleCountryClick = (name: string) => {
       </span>
     </div>
     <div class="tool-content">
-      <div v-for="group in indexList" :key="group.title" class="index-group-block">
-        <div class="index-group-title">{{ group.title }}</div>
-        <div class="index-card-list">
-          <div
-            v-for="item in group.children"
-            :key="item.title"
-            class="index-card"
-          >
-            <div class="index-card-title-row">
-              <span class="index-card-title">{{ item.title }}</span>
-              <span class="index-card-value">{{ item.value }}</span>
-            </div>
-            <div class="index-card-info-row">
-              <span class="index-card-period">近1周</span>
-              <span class="index-card-rate">{{ item.rate }}<span class="index-card-rate-percent">%</span></span>
-            </div>
-            <div class="index-card-link-row">
-              <span class="index-card-link">
-                查看<span style="color: #e53935">{{ item.fundCount }}</span>只指数相关基金
-              </span>
+      <div v-for="group in indexList" :key="group.category" class="index-group-block">
+        <div class="index-group-title">{{ categoryList.find((item) => item.value === group.category)?.label }}</div>
+        <template v-if="group.data.length > 0">
+          <div class="index-card-list">
+            <div
+              v-for="item in group.data"
+              :key="item.trackIndexName"
+              class="index-card"
+              @click="handleIndexClick(item)"
+            >
+              <div class="index-card-title-row">
+                <span class="index-card-title">{{ item.trackIndexName }}</span>
+                <span class="index-card-value">{{ item.currentClose }}</span>
+              </div>
+              <div class="index-card-info-row" v-if="activeTab === 'day'">
+                <span class="index-card-period">日涨幅</span>
+                <span class="index-card-rate">{{ formatValue(item.change) }}<span class="index-card-rate-percent">%</span></span>
+              </div>
+              <div class="index-card-info-row" v-if="activeTab === 'weekly'">
+                <span class="index-card-period">近1周</span>
+                <span class="index-card-rate">{{ formatValue(item.weeklyChange) }}<span class="index-card-rate-percent">%</span></span>
+              </div>
+              <div class="index-card-info-row" v-if="activeTab === 'monthly'">
+                <span class="index-card-period">近1月</span>
+                <span class="index-card-rate">{{ formatValue(item.monthlyChange) }}<span class="index-card-rate-percent">%</span></span>
+              </div>
+              <div class="index-card-info-row" v-if="activeTab === 'threeMonth'">
+                <span class="index-card-period">近3月</span>
+                <span class="index-card-rate">{{ formatValue(item.threeMonthChange) }}<span class="index-card-rate-percent">%</span></span>
+              </div>
+              <div class="index-card-info-row" v-if="activeTab === 'sixMonth'">
+                <span class="index-card-period">近6月</span>
+                <span class="index-card-rate">{{ formatValue(item.sixMonthChange) }}<span class="index-card-rate-percent">%</span></span>
+              </div>
+              <div class="index-card-info-row" v-if="activeTab === 'yearly'">
+                <span class="index-card-period">近1年</span>
+                <span class="index-card-rate">{{ formatValue(item.yearlyChange) }}<span class="index-card-rate-percent">%</span></span>
+              </div>
+              <div class="index-card-link-row">
+                <span class="index-card-link">
+                  查看<span style="color: #e53935">{{ item.count }}</span>只指数相关基金
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <el-empty description="暂无数据" />
+        </template>
       </div>
     </div>
   </div>
@@ -211,9 +179,8 @@ const handleCountryClick = (name: string) => {
 }
 .index-card-title {
   font-size: 1.1rem;
-  font-weight: 600;
   color: #222;
-  max-width: 150px;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -277,6 +244,8 @@ const handleCountryClick = (name: string) => {
   font-size: var(--font-size-medium);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   .tool-filter-label {
     color: #8a8787;
     margin-right: 6px;
@@ -291,8 +260,6 @@ const handleCountryClick = (name: string) => {
     &.active {
       color: #ff5722;
       font-weight: 500;
-      // border-bottom: 2px solid #ff5722;
-      // padding-bottom: 1px;
     }
     &.gray {
       color: #bdbdbd;
@@ -300,6 +267,36 @@ const handleCountryClick = (name: string) => {
     }
     &:hover:not(.active):not(.gray) {
       color: #ff5722;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .tool-filter {
+    margin: 20px 0 12px 0;
+    .tool-filter-label {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .tool-filter-tab {
+      margin-right: 8px;
+      font-size: 14px;
+      padding: 4px 8px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      &.active {
+        background: #fff0eb;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tool-filter {
+    .tool-filter-tab {
+      margin-right: 6px;
+      font-size: 13px;
+      padding: 3px 6px;
     }
   }
 }

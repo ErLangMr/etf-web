@@ -422,7 +422,7 @@ const tableData = ref<Record<string, any>[]>([]);
 }
 .row {
   display: flex;
-  gap: 32px;
+  gap: 62px;
 }
 .block {
   flex: 1;

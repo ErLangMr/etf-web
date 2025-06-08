@@ -7,8 +7,12 @@ import {
   OfficeBuilding,
 } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
-import { nextTick, onMounted } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import * as echarts from "echarts";
+import { getLeftChartDataApi, getRightChartDataApi, getTop3PopularIndicesApi } from "@/api/home";
+import { useDevice } from "@/utils/device";
+
+const { isMobile } = useDevice();
 
 const cards = [
   {
@@ -44,16 +48,50 @@ const handleClick = (path: string) => {
 };
 
 onMounted(() => {
-  initLeftChart();
-  initRightChart();
+  getLeftChartData();
+  getRightChartData();
+  getTop3PopularIndices();
 });
-const initLeftChart = () => {
+
+
+
+function getLeftChartData() {
+  getLeftChartDataApi().then((res) => {
+    initLeftChart(res);
+  });
+}
+
+function getRightChartData() {
+  getRightChartDataApi().then((res) => {
+    initRightChart(res);
+  });
+}
+
+function getTop3PopularIndices() {
+  getTop3PopularIndicesApi().then((res) => {
+    indexList.value = res as any;
+  });
+}
+
+const handleIndexClick = (item: any) => {
+  router.push({
+    path: "/tool-etf-list",
+    query: { index: JSON.stringify(item) },
+  });
+};
+
+const initLeftChart = (data: any) => {
   const leftChart = echarts.init(
     document.getElementById("leftChart") as HTMLElement
   );
   leftChart.setOption({
     legend: {
       data: ["资产净值"],
+    },
+    title: {
+      text: "ETF 市场规模",
+      bottom: "0",
+      left: "center",
     },
     tooltip: {
       trigger: "axis",
@@ -67,13 +105,13 @@ const initLeftChart = () => {
     grid: {
       left: "3%",
       right: "4%",
-      bottom: "3%",
+      bottom: isMobile() ? "10%" : "6%",
       containLabel: true,
     },
     xAxis: {
       type: "category",
       // boundaryGap: false,
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: data.x,
     },
     yAxis: {
       type: "value",
@@ -81,19 +119,24 @@ const initLeftChart = () => {
     series: [
       {
         name: "资产净值",
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        data: data.y,
         type: "bar",
       },
     ],
   });
 };
-const initRightChart = () => {
+const initRightChart = (data: any) => {
   const rightChart = echarts.init(
     document.getElementById("rightChart") as HTMLElement
   );
   rightChart.setOption({
     legend: {
       data: ["资产净值"],
+    },
+    title: {
+      text: "挂钩沪深300指数的ETF产品规模",
+      bottom: "0",
+      left: "center",
     },
     tooltip: {
       trigger: "axis",
@@ -107,13 +150,13 @@ const initRightChart = () => {
     grid: {
       left: "3%",
       right: "4%",
-      bottom: "3%",
+      bottom: isMobile() ? "10%" : "6%",
       containLabel: true,
     },
     xAxis: {
       type: "category",
       boundaryGap: false,
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: data.x,
     },
     yAxis: {
       type: "value",
@@ -121,7 +164,7 @@ const initRightChart = () => {
     series: [
       {
         name: "资产净值",
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        data: data.y,
         type: "line",
         lineStyle: {
           width: 0,
@@ -152,33 +195,7 @@ function goToSZ() {
   window.open("https://fund.szse.cn/");
 }
 
-const indexList = [
-  {
-    title: "热门宽基类",
-    children: [
-      {
-        title: "创业板人创业板人",
-        code: "2914.26",
-      },
-      {
-        title: "中韩半导创业板人",
-        code: "3584.51",
-      },
-      {
-        title: "恒生港股创业板人",
-        code: "2779.89",
-      },
-    ],
-  },
-  {
-    title: "热门行业类",
-    children: [
-      { title: "科技传媒", code: "1858.75" },
-      { title: "云计算", code: "4412.56" },
-      { title: "恒生生物", code: "12738.36" },
-    ],
-  },
-];
+const indexList = ref<any[]>([]);
 </script>
 
 <template>
@@ -213,11 +230,11 @@ const indexList = [
   <div class="divider"></div>
   <div class="index-list">
     <div class="index-list-content">
-      <div class="index-list-item" v-for="item in indexList" :key="item.title">
-        <div class="index-list-item-title">{{ item.title }}</div>
+      <div class="index-list-item" v-for="item in indexList" :key="item.category">
+        <div class="index-list-item-title">{{ item.category }}</div>
         <div class="index-list-item-content">
-          <div class="index-list-item-content-item" v-for="child in item.children" :key="child.title">
-            <div class="index-list-item-content-item-title">{{ child.title }}</div>
+          <div class="index-list-item-content-item" v-for="child in item.data" :key="child.title" @click="handleIndexClick(child)">
+            <div class="index-list-item-content-item-title">{{ child.trackIndexName }}</div>
           </div>
         </div>
       </div>

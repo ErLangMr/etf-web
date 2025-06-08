@@ -44,7 +44,7 @@ const generateBreadcrumbs = () => {
   const currentItem = {
     path: currentPath,
     title: currentTitle,
-    query: route.query?.code ? { code: route.query.code } : route.query?.issuer ? { issuer: route.query.issuer } : {}
+    query: route.query?.code ? { code: route.query.code } : route.query?.issuer ? { issuer: route.query.issuer } : route.query?.index ? { index: route.query.index } : {}
   }
 
   // 检查是否已经在历史记录中
