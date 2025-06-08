@@ -105,7 +105,7 @@ const initLeftChart = (data: any) => {
     grid: {
       left: "3%",
       right: "4%",
-      bottom: isMobile() ? "10%" : "6%",
+      bottom: isMobile() ? "10%" : "8%",
       containLabel: true,
     },
     xAxis: {
@@ -150,7 +150,7 @@ const initRightChart = (data: any) => {
     grid: {
       left: "3%",
       right: "4%",
-      bottom: isMobile() ? "10%" : "6%",
+      bottom: isMobile() ? "10%" : "8%",
       containLabel: true,
     },
     xAxis: {

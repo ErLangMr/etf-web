@@ -18,11 +18,15 @@ const activeTab = ref('weekly');
 const setActiveTab = (val: string) => {
   activeTab.value = val;
   getPopularIndicesApi(activeTab.value).then((res) => {
-    indexList.value = res as any;
+    const data = res as any;
+    if (data && data.length > 0) {
+      const firstItem = data.shift();
+      data.push(firstItem);
+    }
+    indexList.value = data;
   });
 };
 const handleIndexClick = (item: any) => {
-  console.log(item, 111);
     router.push({
       path: "/tool-etf-list",
       query: {
@@ -39,7 +43,12 @@ const categoryList = ref([
 ])
 onMounted(() => {
   getPopularIndicesApi(activeTab.value).then((res) => {
-    indexList.value = res as any;
+    const data = res as any;
+    if (data && data.length > 0) {
+      const firstItem = data.shift();
+      data.push(firstItem);
+    }
+    indexList.value = data;
   });
 });
 </script>
