@@ -133,7 +133,7 @@ const router = useRouter()
 }
 
 .header-content {
-  width: 100%;
+  width: 85%;
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 $spacing-base;
@@ -143,6 +143,7 @@ const router = useRouter()
   justify-content: space-between;
 
   @include mobile {
+    width: 100%;
     height: $header-height-mobile;
     padding: 0 $spacing-small;
   }
@@ -221,7 +222,7 @@ const router = useRouter()
 
 .main {
   flex: 1;
-  width: 100%;
+  width: 85%;
   max-width: 1600px;
   margin: 0 auto;
   margin-top: $header-height;
@@ -230,6 +231,7 @@ const router = useRouter()
 
   margin-bottom: 20px;
   @include mobile {
+    width: 100%;
     margin-top: $header-height-mobile;
   }
   .main-content {

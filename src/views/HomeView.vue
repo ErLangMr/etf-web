@@ -11,6 +11,7 @@ import { nextTick, onMounted, ref } from "vue";
 import * as echarts from "echarts";
 import { getLeftChartDataApi, getRightChartDataApi, getTop3PopularIndicesApi } from "@/api/home";
 import { useDevice } from "@/utils/device";
+import { formatValue } from "@/utils/formatValue";
 
 const { isMobile } = useDevice();
 
@@ -61,9 +62,27 @@ function getLeftChartData() {
   });
 }
 
+interface ChartData {
+  x: string[];
+  y: number[];
+}
+
 function getRightChartData() {
   getRightChartDataApi().then((res) => {
-    initRightChart(res);
+    const data = res as ChartData;
+    if (!data.y || data.y.length === 0) {
+      initRightChart(data, 0, 0);
+      return;
+    }
+    data.y = data.y.map((item) => {
+      return formatValue(item);
+    });
+    const max = Math.max(...data.y);
+    const min = Math.min(...data.y);
+
+    // 可以添加一些边距，让图表显示更美观
+    const padding = (max - min) * 0.1;
+    initRightChart(data, min - padding, max + padding);
   });
 }
 
@@ -95,12 +114,6 @@ const initLeftChart = (data: any) => {
     },
     tooltip: {
       trigger: "axis",
-      // axisPointer: {
-      //   type: 'cross',
-      //   label: {
-      //     backgroundColor: '#6a7985'
-      //   }
-      // }
     },
     grid: {
       left: "3%",
@@ -110,7 +123,6 @@ const initLeftChart = (data: any) => {
     },
     xAxis: {
       type: "category",
-      // boundaryGap: false,
       data: data.x,
     },
     yAxis: {
@@ -123,9 +135,19 @@ const initLeftChart = (data: any) => {
         type: "bar",
       },
     ],
+    graphic: data.y.length === 0 ? [{
+      type: 'text',
+      left: 'center',
+      top: 'middle',
+      style: {
+        text: '暂无数据',
+        fontSize: 16,
+        fill: '#999'
+      }
+    }] : []
   });
 };
-const initRightChart = (data: any) => {
+const initRightChart = (data: any, min: number, max: number) => {
   const rightChart = echarts.init(
     document.getElementById("rightChart") as HTMLElement
   );
@@ -160,6 +182,8 @@ const initRightChart = (data: any) => {
     },
     yAxis: {
       type: "value",
+      min: min,
+      max: max,
     },
     series: [
       {
@@ -186,6 +210,16 @@ const initRightChart = (data: any) => {
         },
       },
     ],
+    graphic: data.y.length === 0 ? [{
+      type: 'text',
+      left: 'center',
+      top: 'middle',
+      style: {
+        text: '暂无数据',
+        fontSize: 16,
+        fill: '#999'
+      }
+    }] : []
   });
 };
 function goToSJS() {

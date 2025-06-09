@@ -183,6 +183,16 @@ const initChart = async () => {
         // barWidth: isMobile() ? 8 : 16,
       },
     ],
+    graphic: seriesData.value.length === 0 ? [{
+      type: 'text',
+      left: 'center',
+      top: 'middle',
+      style: {
+        text: '暂无数据',
+        fontSize: 16,
+        fill: '#999'
+      }
+    }] : [],
     tooltip: {
       trigger: "axis",
       axisPointer: { type: "shadow" },
