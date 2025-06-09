@@ -134,7 +134,7 @@ const router = useRouter()
 
 .header-content {
   width: 100%;
-  max-width: 1800px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 $spacing-base;
   height: $header-height;
@@ -222,7 +222,7 @@ const router = useRouter()
 .main {
   flex: 1;
   width: 100%;
-  max-width: 1800px;
+  max-width: 1600px;
   margin: 0 auto;
   margin-top: $header-height;
   background: $background-color-white;

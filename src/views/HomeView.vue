@@ -202,11 +202,11 @@ const indexList = ref<any[]>([]);
   <div class="home-chart">
     <div class="home-chart-left">
       <div id="leftChart"></div>
-      <img src="@/assets/上证基金网.png" alt="chart-left" @click="goToSJS" />
+      <img src="@/assets/上证基金网.jpg" alt="chart-left" @click="goToSJS" />
     </div>
     <div class="home-chart-right">
       <div id="rightChart"></div>
-      <img src="@/assets/深圳.png" alt="chart-left" @click="goToSZ" />
+      <img src="@/assets/深证基金网.jpg" alt="chart-left" @click="goToSZ" />
     </div>
   </div>
   <div class="divider"></div>
