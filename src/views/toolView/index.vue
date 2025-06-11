@@ -15,15 +15,38 @@ const filterTabs = [
   { label: '近1年', value: 'yearly', gray: false },
 ];
 const activeTab = ref('weekly');
+
+const categoryList = ref([
+  { label: "股票", value: "EQUITY" },
+  { label: "跨境", value: "CROSS_BOUNDARY" },
+  { label: "债券", value: "BOND" },
+  { label: "商品", value: "GOODS" },
+]);
+
+const categoryOrder: Record<string, number> = {
+  EQUITY: 1,
+  CROSS_BOUNDARY: 2,
+  BOND: 3,
+  GOODS: 4
+};
+
 const setActiveTab = (val: string) => {
   activeTab.value = val;
   getPopularIndicesApi(activeTab.value).then((res) => {
     const data = res as any;
     if (data && data.length > 0) {
-      const firstItem = data.shift();
-      data.push(firstItem);
+      // 过滤掉 CURRENCY 类别的数据
+      const filteredData = data.filter((item: any) => item.category !== 'CURRENCY');
+      // 按照指定顺序排序
+      filteredData.sort((a: any, b: any) => {
+        const orderA = categoryOrder[a.category] || 999;
+        const orderB = categoryOrder[b.category] || 999;
+        return orderA - orderB;
+      });
+      indexList.value = filteredData;
+    } else {
+      indexList.value = [];
     }
-    indexList.value = data;
   });
 };
 const handleIndexClick = (item: any) => {
@@ -34,21 +57,22 @@ const handleIndexClick = (item: any) => {
       },
     });
 };
-const categoryList = ref([
-  { label: "股票", value: "EQUITY" },
-  { label: "债券", value: "BOND" },
-  { label: "商品", value: "GOODS" },
-  { label: "货币", value: "CURRENCY" },
-  { label: "跨境", value: "CROSS_BOUNDARY" },
-])
 onMounted(() => {
   getPopularIndicesApi(activeTab.value).then((res) => {
     const data = res as any;
     if (data && data.length > 0) {
-      const firstItem = data.shift();
-      data.push(firstItem);
+      // 过滤掉 CURRENCY 类别的数据
+      const filteredData = data.filter((item: any) => item.category !== 'CURRENCY');
+      // 按照指定顺序排序
+      filteredData.sort((a: any, b: any) => {
+        const orderA = categoryOrder[a.category] || 999;
+        const orderB = categoryOrder[b.category] || 999;
+        return orderA - orderB;
+      });
+      indexList.value = filteredData;
+    } else {
+      indexList.value = [];
     }
-    indexList.value = data;
   });
 });
 </script>
@@ -113,7 +137,7 @@ onMounted(() => {
               </div>
               <div class="index-card-link-row">
                 <span class="index-card-link">
-                  查看<span style="color: #e53935">{{ item.count }}</span>只指数相关基金
+                  查看<span style="color: #e53935">{{ item.count }}</span>只指数相关ETF
                 </span>
               </div>
             </div>

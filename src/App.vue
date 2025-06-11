@@ -35,10 +35,10 @@ const router = useRouter()
             <img src="@/assets/logo.png" alt="Logo" />
           </div>
           <nav class="nav desktop-nav" v-if="!isMobile()">
-            <RouterLink to="/etfs" class="nav-item">ETF分类排行</RouterLink>
+            <RouterLink to="/screener" class="nav-item">ETF筛选器</RouterLink>
+            <RouterLink to="/etfs" class="nav-item">ETF类型</RouterLink>
             <RouterLink to="/tool" class="nav-item">ETF跟踪指数</RouterLink>
             <RouterLink to="/issuers" class="nav-item">ETF发行人</RouterLink>
-            <RouterLink to="/screener" class="nav-item">ETF筛选器</RouterLink>
           </nav>
         </div>
         <div class="right-section">
@@ -93,10 +93,10 @@ const router = useRouter()
         </el-autocomplete> -->
       </div>
       <nav class="mobile-nav">
-        <RouterLink to="/etfs" class="nav-item" @click="toggleMenu">ETF分类排行</RouterLink>
-        <RouterLink to="/tool" class="nav-item" @click="toggleMenu">ETF投资地域</RouterLink>
-        <RouterLink to="/issuers" class="nav-item" @click="toggleMenu">ETF发行人</RouterLink>
         <RouterLink to="/screener" class="nav-item" @click="toggleMenu">ETF筛选器</RouterLink>
+        <RouterLink to="/etfs" class="nav-item" @click="toggleMenu">ETF类型</RouterLink>
+        <RouterLink to="/tool" class="nav-item" @click="toggleMenu">ETF跟踪指数</RouterLink>
+        <RouterLink to="/issuers" class="nav-item" @click="toggleMenu">ETF发行人</RouterLink>
       </nav>
     </div>
 

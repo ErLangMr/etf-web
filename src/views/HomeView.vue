@@ -24,19 +24,19 @@ const cards = [
   },
   {
     title: "ETF 类型",
-    desc: 'ETF数据库工作人员将 ETF 标记为多种类型；例如"杠杆"、"政府债券"和"债券"',
+    desc: '将ETF根据资产类型、投资区域、发行人等进行分类，并根据资产规模、收益、费率等进行排序。',
     icon: Edit,
     path: "/etfs",
   },
   {
     title: "ETF 跟踪指数",
-    desc: "想要为您的投资组合添加特定国家/地区的敞口吗？使用我们的国家/地区敞口工具！",
+    desc: "想要拥有特定指数的投资组合吗?关注ETF追踪指数。",
     icon: Location,
     path: "/tool",
   },
   {
     title: "ETF 发行人",
-    desc: "使用我们的数据库工具可以快速轻松地查找由 70 多个不同发行人发行的 ETF。",
+    desc: "快速轻松地查找由50多家不同发行人发行的ETF。",
     icon: OfficeBuilding,
     path: "/issuers",
   },
@@ -105,7 +105,7 @@ const initLeftChart = (data: any) => {
   );
   leftChart.setOption({
     legend: {
-      data: ["资产净值"],
+      data: ["资产净值(亿元)"],
     },
     title: {
       text: "ETF 市场规模",
@@ -130,7 +130,7 @@ const initLeftChart = (data: any) => {
     },
     series: [
       {
-        name: "资产净值",
+        name: "资产净值(亿元)",
         data: data.y,
         type: "bar",
       },
@@ -153,7 +153,7 @@ const initRightChart = (data: any, min: number, max: number) => {
   );
   rightChart.setOption({
     legend: {
-      data: ["资产净值"],
+      data: ["资产净值(亿元)"],
     },
     title: {
       text: "挂钩沪深300指数的ETF产品规模",
@@ -187,7 +187,7 @@ const initRightChart = (data: any, min: number, max: number) => {
     },
     series: [
       {
-        name: "资产净值",
+        name: "资产净值(亿元)",
         data: data.y,
         type: "line",
         lineStyle: {

@@ -25,7 +25,7 @@ const router = createRouter({
       name: 'etfs',
       component: () => import('../views/etfsView/index.vue'),
       meta: {
-        title: 'ETF 目录'
+        title: 'ETF 类型'
       }
     },
     {

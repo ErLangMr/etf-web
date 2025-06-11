@@ -12,6 +12,18 @@ const tableColumns = ref<any[]>([])
 const description = ref<any>({})
 
 const filterTabs = [
+{ label: '管理规模', value: 'AUM',
+    columns: [
+      { prop: 'issuer', label: '发行人',type:'link',url:'/proshares' },
+      { prop: 'fundRank', label: '规模排名' },
+      { prop: 'dataValue', label: 'ETF规模（百万元）', unit: 'million' },
+      { prop: 'eftSize', label: 'ETF数量',type:'link',url:'/proshares' },
+    ],
+    description: {
+      title: 'ETF发行人资产管理规模排行榜',
+      desc: 'ETF发行人根据其管理的ETF产品规模进行排名。'
+    }
+   },
   { label: '发行人收入', value: 'Revenue',
     columns: [
       { prop: 'issuer', label: '发行人',type:'link',url:'/proshares' },
@@ -21,7 +33,7 @@ const filterTabs = [
     ],
     description: {
       title: 'ETF发行人收入排行榜',
-      desc: 'ETF发行人的排名基于其ETF业务的预估收入。ETF 发行人的预估收入是通过汇总所有发行人 ETF 的预估收入计算得出的。要计算单个ETF的预估收入，需要将资产管理规模(AUM)乘以该 ETF 的费用率。所有数值均以元为单位。'
+      desc: 'ETF发行人的排名基于其ETF业务的预估收入。ETF 发行人的预估收入是通过汇总所有该发行人旗下ETF产品的费用收入计算得出的。要计算单个ETF产品为发行人带来的预估收入，需要将该ETF产品的规模乘以该 ETF 的费用率。'
     }
    },
   { label: '资金流入', value: 'Fund Flows',
@@ -33,7 +45,7 @@ const filterTabs = [
     ],
     description: {
       title: 'ETF发行人资金流向排行榜',
-      desc: 'ETF发行人排名基于其 3 个月总资金流。3 个月资金流是一个指标，可用于衡量不同ETF发行人在投资者中的受欢迎程度。所有数值均以元为单位'
+      desc: 'ETF发行人排名基于其过去3个月的资金净流入规模。过去3个月资金净流入规模，可用于衡量不同ETF发行人在投资者中的受欢迎程度。'
     }
    },
   { label: '收益', value: 'Return',
@@ -45,19 +57,7 @@ const filterTabs = [
     ],
     description: {
       title: 'ETF发行人收益排行榜',
-      desc: 'ETF发行人的排名基于其资产管理规模（AUM）加权平均3个月回报率。除价格表现外，3个月回报率还假设过去3个月内所有股息均已进行再投资'
-    }
-   },
-  { label: '管理规模', value: 'AUM',
-    columns: [
-      { prop: 'issuer', label: '发行人',type:'link',url:'/proshares' },
-      { prop: 'fundRank', label: '规模排名' },
-      { prop: 'dataValue', label: '资产规模（百万元）', unit: 'million' },
-      { prop: 'eftSize', label: 'ETF数量',type:'link',url:'/proshares' },
-    ],
-    description: {
-      title: 'ETF发行人资产管理规模排行榜',
-      desc: 'ETF发行人根据其管理资产总额（AUM）进行排名。所有价值均以元计算'
+      desc: 'ETF发行人的排名基于其管理的ETF产品在过去3个月的加权平均收益率，权重为每只ETF产品的规模。此处的收益率为考虑分红再投资的ETF净值增长率。'
     }
    },
   { label: '费用', value: 'Expenses',
@@ -69,7 +69,7 @@ const filterTabs = [
     ],
     description: {
       title: 'ETF 发行人费用排行榜',
-      desc: 'ETF发行人的排名基于其资产管理规模（AUM）加权平均费用率。某一发行人所有上市ETF的平均费用率越低，其排名越高。'
+      desc: 'ETF发行人的排名基于其ETF产品的加权平均费用率，权重为每只ETF产品的规模。某一发行人旗下所有ETF产品的平均费用率越低，其排名越高。'
     }
    },
   { label: '分红', value: 'Dividends',
@@ -81,11 +81,11 @@ const filterTabs = [
     ],
     description: {
       title: 'ETF发行人分红排行榜',
-      desc: 'ETF发行人根据其AUM加权平均股息收益率进行排名'
+      desc: 'ETF发行人根据其ETF产品的加权平均分红率进行排名，权重为每只ETF的规模'
     }
    },
 ]
-const activeTab = ref('Revenue')
+const activeTab = ref('AUM')
 const activeTabChange = (value: string) => {
   activeTab.value = value
   updateColumns()
@@ -144,15 +144,15 @@ const columnClick = (row: any, prop: string) => {
 <template>
   <div class="issuers-container">
     <div class="issuers-header">
-      <h1>所有ETF发行人</h1>
+      <h1>ETF发行人</h1>
       <p class="issuers-desc">
-        ETF 由ETF发行人发行或推出。市场上有很多ETF发行人。完整的发行人列表如下。
+        本模块展示市场上所有的ETF发行人列表。
       </p>
     </div>
     <div class="issuers-header">
       <h1 class="issuers-title" style="margin-top: 3rem;">ETF发行人排行榜</h1>
       <p class="issuers-desc">
-        发行人排行榜是根据某些投资相关指标对ETF发行人进行排名，这些指标包括预计收入、3个月资金流量、3个月回报率、资产管理规模 (AUM)、平均ETF费用和平均股息收益率。该指标计算基于上市的ETF，每只ETF都有一个发行人。如果发行人更改其ETF，也会反映在投资指标计算中
+        发行人排行榜是根据某些投资相关指标对ETF发行人进行排名，这些指标包括预计收入、3个月资金流量、3个月回报率、资产管理规模 (AUM)、平均ETF费用和平均分红率。
       </p>
     </div>
     <div class="list-container">

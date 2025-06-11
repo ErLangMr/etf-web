@@ -1,6 +1,6 @@
 <template>
   <div class="tool-etf-list-container">
-    <h1>{{ index.trackIndexName }} 相关基金</h1>
+    <h1>{{ index.trackIndexName }} 相关ETF</h1>
     <div class="list-container">
       <h2>ETF 概览</h2>
       <div class="list-box">

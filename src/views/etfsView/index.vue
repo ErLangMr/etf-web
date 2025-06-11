@@ -79,14 +79,14 @@ const tableList = ref([
       { prop: "category", label: "商品敞口", minWidth: "120" },
     ],
   },
-  {
-    title: "自然资源",
-    value: "naturalResources",
-    data: [],
-    originalColumns: [
-      { prop: "category", label: "自然资源", minWidth: "120" },
-    ],
-  },
+  // {
+  //   title: "自然资源",
+  //   value: "naturalResources",
+  //   data: [],
+  //   originalColumns: [
+  //     { prop: "category", label: "自然资源", minWidth: "120" },
+  //   ],
+  // },
   // {
   //   title: "货币",
   //   value: "currency",
@@ -275,13 +275,12 @@ const categoryList = ref([
 
 <template>
   <div class="etf-directory-container">
-    <h1>ETF 目录</h1>
+    <h1>ETF 类型</h1>
     <p class="etf-desc">
-      随着 ETF 领域的持续拓展，可利用下方表格筛选感兴趣的 ETF 主题 范围。ETF
-      产品涵盖广泛的资产类别、行业领域、发行人及投资风 格。一只 ETF
-      产品可能同时归属于多重主题类别；例如，一只名称为 “嘉实中证机器人
+      随着 ETF 领域的持续拓展，可利用下方表格筛选感兴趣的 ETF类型。ETF
+      产品涵盖广泛的资产类别、行业领域、发行人及投资风格。一只ETF产品根据不同维度可同时归属于多种类型；例如，一只名称为 “嘉实中证机器人
       ETF”（产品代码：159526）的主题类 ETF 产品，
-      可同时归类为资产类型为““股票”，行业类型为“工业”，市值风格为
+      可同时归类为：资产类型为“股票”，行业类型为“工业”，市值风格为
       “小盘”且投资风格属于“成长”。
     </p>
     <div class="etf-tabs">
