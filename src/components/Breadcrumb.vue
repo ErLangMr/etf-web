@@ -2,6 +2,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { HomeFilled } from '@element-plus/icons-vue'
+import { getCountApi, setCountApi } from '@/api/home'
 
 interface BreadcrumbItem {
   path: string
@@ -83,12 +84,14 @@ watch(
   () => route.fullPath,
   () => {
     generateBreadcrumbs()
+    setCount()
   }
 )
 
 // 组件挂载时初始化
 onMounted(() => {
   generateBreadcrumbs()
+  getCount()
 })
 
 // 点击面包屑项
@@ -100,6 +103,21 @@ const handleClick = (item: BreadcrumbItem) => {
 
 // 判断是否为首页
 const isHome = (path: string) => path === '/'
+const WindowCount = ref(0)
+function setCount(){
+  const currentPath = route.path
+  if (currentPath === '/') {
+    setCountApi().then(res => {
+    getCount()
+  })
+  }
+}
+function getCount(){
+  getCountApi().then(res => {
+    console.log(res, 'getCountApi')
+    WindowCount.value = res.counter.value
+  })
+}
 </script>
 
 <template>
@@ -122,6 +140,9 @@ const isHome = (path: string) => path === '/'
         </template>
       </el-breadcrumb-item>
     </el-breadcrumb>
+    <div style="position: absolute; right: 20px; top: 12px;">
+      <span>浏览量{{ WindowCount }}</span>
+    </div>
   </div>
 </template>
 
@@ -132,6 +153,7 @@ const isHome = (path: string) => path === '/'
   background-color: #fff;
   border-radius: 4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
 }
 
 .el-breadcrumb {
