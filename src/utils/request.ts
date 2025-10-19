@@ -9,7 +9,7 @@ const getBaseUrl = () => {
     case 'development':
       return '/api' // 开发环境使用代理
     case 'production':
-      return '/' // 生产环境
+      return '/api' // 生产环境
     default:
       return '/'
   }
